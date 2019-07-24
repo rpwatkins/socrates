@@ -26,7 +26,7 @@ func clean() {
 
 	cwd, err := os.Getwd()
 	if err != nil {
-		log.Error("could not get curent directory")
+		log.Error("could not get current directory")
 		os.Exit(1)
 	}
 

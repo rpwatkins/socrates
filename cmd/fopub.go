@@ -29,7 +29,7 @@ func buildFopub() {
 	// destination is the build folder under the cwd
 	cwd, err := os.Getwd()
 	if err != nil {
-		log.Error("could not get curent directory")
+		log.Error("could not get current directory")
 		os.Exit(1)
 	}
 	source := filepath.Join("src", "master.adoc")
