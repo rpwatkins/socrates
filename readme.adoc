@@ -88,8 +88,76 @@ Any text editor can be used to edit manuscript files. I recommend https://code.v
 
 Also, if you choose to use VS Code, there is a very useful https://marketplace.visualstudio.com/items?itemName=mblode.zotero[Zotero connector] that allows placing citations directly in the editor right from VS Code.
 
+== Using Socrates
 
+Socrates accepts the following commands:
 
+* init
+* clean
+* version
+* pdf
+* fopub
+* html
+* docbook
 
+=== init
 
+To create a new project, create an empty folder. Socrates will use the name of this folder to name you manuscript.
+From within the new folder, initilize a new project:
+
+```
+socrates init
+```
+
+This will create a "src/" folder containing a master.adoc, chapters folder (and a starter chapter), the back_matter folder (with a default bibliography), and image folder to store images, an assets folder (in which any other files you may want stored with the manuscript), a resources folder that contain the asciidoctor-pdf style template for the manuscript, and a blank references.bib file.
+
+These source files will be used to generate html pages, PDF, or docbook5 files. All built manuscripts can be found in the "builds/" folder.
+
+=== pdf
+
+```
+socrates pdf
+```
+
+The pdf command creates a PDF file using asciidoctor-pdf and the included default style template.
+
+=== html
+
+```
+socrates html
+```
+
+The html command creates a self-contained web page (html file). Images are inlined using the data-uri switch in asciidoctor.
+
+=== fopub
+
+```
+socrates fopub
+```
+
+The fopub command creates a PDF file using the asciidoctor-fopub tool-chain.
+
+=== docbook
+
+```
+socrates docbook
+```
+
+The docbook command creates a docbook5 compatible xml file.
+
+=== clean
+
+```
+socrates clean
+```
+
+The clean command empties all builds in the build folder.
+
+=== version
+
+```
+socrates version
+```
+
+The version command displays the current Socrates version number.
 
