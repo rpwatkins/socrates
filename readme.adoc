@@ -43,16 +43,16 @@ Note: The instructions below install the 64 bit build. i386 builds are also avai
 ==== GNU/Linux
 
 ```
-$ wget https://github.com/rpwatkins/socrates/releases/download/v0.0.3/socrates_0.0.3_linux_amd64.tar.gz
-$ tar -xvzf socrates_0.0.3_linux_amd64.tar.gz
+$ wget https://github.com/rpwatkins/socrates/releases/download/v0.0.1/socrates_0.0.1_linux_amd64.tar.gz
+$ tar -xvzf socrates_0.0.1_linux_amd64.tar.gz
 $ sudo mv socrates /usr/local/bin/socrates
 ```
 
 ==== MacOS
 
 ```
-$ curl -OL https://github.com/rpwatkins/rpwatkins/releases/download/v0.0.3/socrates_0.0.3_darwin_amd64.tar.gz
-$ tar -xvzf socrates_0.0.3_darwin_amd64.tar.gz
+$ curl -OL https://github.com/rpwatkins/rpwatkins/releases/download/v0.0.1/socrates_0.0.1_darwin_amd64.tar.gz
+$ tar -xvzf socrates_0.0.1_darwin_amd64.tar.gz
 $ sudo mv socrates /usr/local/bin/socrates
 # or if you have ~/bin folder setup in the environment PATH variable
 $ mv buffalo ~/bin/socrates
