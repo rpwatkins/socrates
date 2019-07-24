@@ -1,0 +1,87 @@
+Socrates is a front-end CLI for creating manuscripts from asciidoc files. It uses the Asciidoctor tool-chain to create manuscript from a set of files.
+
+== Prerequisites
+
+Socrates requires a number of prerequisites. 
+
+=== Ruby and gems
+
+Socrates requires a working Ruby installation and the following gems:
+
+* asciidoctor
+* asciidoctor-pdf
+* asciidoctor-bibliography
+* asciidoctor-diagram
+
+To install:
+
+```
+gem install asciidoctor asciidoctor-pdf asciidoctor-diagram asciidoctor-bibliography --pre
+```
+
+=== Fonts
+
+Fonts are used when producing PDFs using asciidoctor-pdf. Out of the box, Socrates support three fonts:
+
+* Noto Serif (available at https://fonts.google.com/specimen/Noto+Serif?selection.family=Noto+Serif)[Google Fonts]) is the primary font.
+* M+ 1nm and M+ 1p (https://github.com/rayshan/mplus-fonts[available here]) are fallback fonts.
+
+You are not required to use the default fonts. Fonts can be changed by editing the default-theme.yml file in the src/resources/pdf-styles folder.
+
+=== Optional Fopub support
+
+Socrates can also generate PDF files using the https://github.com/asciidoctor/asciidoctor-fopub[asciidoctor-fopub] tool-chain. See the asciidoctor-fopub github repository for instructions on installing the tool-chain. 
+
+Once installed, make sure "fopub" is in your path statement so that Socrates can find the tool-chain.
+
+== Installation
+
+=== Binary Installation
+
+Note: The instructions below install the 64 bit build. i386 builds are also available from the release page.
+
+==== GNU/Linux
+
+```
+$ wget https://github.com/rpwatkins/socrates/releases/download/v0.0.3/socrates_0.0.3_linux_amd64.tar.gz
+$ tar -xvzf socrates_0.0.3_linux_amd64.tar.gz
+$ sudo mv socrates /usr/local/bin/socrates
+```
+
+==== MacOS
+
+```
+$ curl -OL https://github.com/rpwatkins/rpwatkins/releases/download/v0.0.3/socrates_0.0.3_darwin_amd64.tar.gz
+$ tar -xvzf socrates_0.0.3_darwin_amd64.tar.gz
+$ sudo mv socrates /usr/local/bin/socrates
+# or if you have ~/bin folder setup in the environment PATH variable
+$ mv buffalo ~/bin/socrates
+```
+
+==== Windows
+
+Download the windows release from the Releases page, extract the socrates.exe file, and place the socrates executable somewhere on your path.
+
+=== Source Install
+
+```
+go get -u -v github.com/rpwatkins/socrates
+```
+
+== Zotero integration
+
+Socrates supports references and bibliography generation using https://github.com/riboseinc/asciidoctor-bibliography[asciidoctor-bibliography]. For complete instructions on using asciidoctor-bibliography, see the its github page. Asciidoctor-bibliography relies on a bibtex file (src/references.bib) to populate manuscript references and a bibliography. Many programs can generate bibtex files.
+
+https://www.zotero.org[Zotero], an open source reference manager, has excellent support for bibtex files when the BetterBibtex add-on is enabled. One can then use Zotero to generate and update the references.bib files. Also, when using the https://github.com/retorquere/zotero-better-bibtex[BetterBibTex] add-on, the exported references.bib is updated every time a reference is added, edited, or deleted from the Zotero database.
+
+== Visual Studio Code
+
+Any text editor can be used to edit manuscript files. I recommend https://code.visualstudio.com[Visual Studio Code] because it has very good support for asciidoc files. VS Code with the https://marketplace.visualstudio.com/items?itemName=joaompinto.asciidoctor-vscode[asciidoc extension] provides live preview, syntax highlighting, and more.
+
+Also, if you choose to use VS Code, there is a very useful https://marketplace.visualstudio.com/items?itemName=mblode.zotero[Zotero connector] that allows placing citations directly in the editor right from VS Code.
+
+
+
+
+
+
