@@ -1,4 +1,4 @@
-Socrates is a front-end CLI for creating manuscripts from asciidoc files. It uses the Asciidoctor tool-chain to create manuscript from a set of files.
+Socrates is a front-end CLI for creating manuscripts from asciidoc files. It uses the Asciidoctor tool-chain to create manuscript from a set of files. Socrates is written in Go so it produces a single executable file with no dependencies making it especially useful yet still easy to use.
 
 == Prerequisites
 
@@ -13,11 +13,17 @@ Socrates requires a working Ruby installation and the following gems:
 * asciidoctor-bibliography
 * asciidoctor-diagram
 
-To install:
+To install Ruby, MacOS and Linux users can use their package manager.
+Windows users can use the packages at https://rubyinstaller.org[RubyInstaller].
+Socrates has been tested with Ruby 2.5.x.
+
+To install the needed gems:
 
 ```
 gem install asciidoctor asciidoctor-pdf asciidoctor-diagram asciidoctor-bibliography --pre
 ```
+
+or use https://bundler.io[bundler] if you prefer.
 
 === Fonts
 
@@ -25,6 +31,8 @@ Fonts are used when producing PDFs using asciidoctor-pdf. Out of the box, Socrat
 
 * Noto Serif (available at https://fonts.google.com/specimen/Noto+Serif?selection.family=Noto+Serif)[Google Fonts]) is the primary font.
 * M+ 1nm and M+ 1p (https://github.com/rayshan/mplus-fonts[available here]) are fallback fonts.
+
+Download the fonts and use your operating system font tool to install the fonts.
 
 You are not required to use the default fonts. Fonts can be changed by editing the default-theme.yml file in the src/resources/pdf-styles folder.
 
