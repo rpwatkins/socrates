@@ -2,9 +2,9 @@ Socrates is a front-end CLI written in Go for creating manuscripts from asciidoc
 
 == Prerequisites
 
-Socrates requires a number of prerequisites. 
+Socrates requires Go 1.12 or above. As well, Socrates relies on these additional tools.
 
-=== Ruby and gems
+=== Ruby and Gems
 
 Socrates requires a working Ruby installation and the following gems:
 
@@ -13,9 +13,7 @@ Socrates requires a working Ruby installation and the following gems:
 * asciidoctor-bibliography
 * asciidoctor-diagram
 
-To install Ruby, MacOS and Linux users can use their package manager.
-Windows users can use the packages at https://rubyinstaller.org[RubyInstaller].
-Socrates has been tested with Ruby 2.5.x.
+To install Ruby, MacOS and Linux users can use their package manager. Windows users can use the packages at https://rubyinstaller.org[RubyInstaller]. Socrates has been tested with Ruby 2.5.x.
 
 To install the needed gems:
 
