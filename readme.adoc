@@ -2,7 +2,7 @@ Socrates is a front-end CLI written in Go for creating manuscripts from asciidoc
 
 == Prerequisites
 
-Socrates requires Go 1.12 or above. As well, Socrates relies on these additional tools.
+Socrates relies on these additional tools.
 
 === Ruby and Gems
 
