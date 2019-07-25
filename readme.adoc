@@ -70,7 +70,7 @@ Download the windows release from the Releases page, extract the socrates.exe fi
 === Source Install
 
 ```
-go get -u -v github.com/rpwatkins/socrates
+go get -u github.com/rpwatkins/socrates
 ```
 
 == Zotero integration
