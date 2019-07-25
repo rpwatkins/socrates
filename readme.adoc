@@ -20,7 +20,8 @@ Socrates has been tested with Ruby 2.5.x.
 To install the needed gems:
 
 ```
-gem install asciidoctor asciidoctor-pdf asciidoctor-diagram asciidoctor-bibliography --pre
+gem install asciidoctor asciidoctor-diagram asciidoctor-bibliography
+gem install asciidoctor-pdf --pre
 ```
 
 or use https://bundler.io[bundler] if you prefer.
