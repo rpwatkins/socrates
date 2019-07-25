@@ -39,7 +39,7 @@ You are not required to use the default fonts. Fonts can be changed by editing t
 
 Socrates can also generate PDF files using the https://github.com/asciidoctor/asciidoctor-fopub[asciidoctor-fopub] tool-chain. See the asciidoctor-fopub github repository for instructions on installing the tool-chain. 
 
-Once installed, make sure "fopub" is in your path statement so that Socrates can find the tool-chain.
+Once installed, make sure the fopub executable is in your path statement so that Socrates can find the tool-chain.
 
 == Installation
 
