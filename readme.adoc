@@ -24,8 +24,6 @@ gem install asciidoctor asciidoctor-diagram asciidoctor-bibliography
 gem install asciidoctor-pdf --pre
 ```
 
-or use https://bundler.io[bundler] if you prefer.
-
 === Fonts
 
 Fonts are used when producing PDFs using asciidoctor-pdf. Out of the box, Socrates support three fonts:
