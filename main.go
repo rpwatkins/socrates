@@ -7,5 +7,5 @@ import (
 
 func main() {
 	log.SetLevel(log.InfoLevel)
-	cmd.Execute()
+	cmd.Execute(Version)
 }
