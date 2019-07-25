@@ -45,7 +45,7 @@ Once installed, make sure "fopub" is in your path statement so that Socrates can
 
 === Binary Installation
 
-Note: The instructions below install the 64 bit build. i386 builds are also available from the release page.
+Note: The instructions below install the 64 bit build. 32 bit builds are also available from the release page.
 
 ==== GNU/Linux
 
@@ -159,4 +159,10 @@ socrates version
 ```
 
 The version command displays the current Socrates version number.
+
+== Roadmap
+
+* Syntax highlighter support (pygments.rb, rouge, coderay)
+* Mathematical formula support (asciidoctor-mathematical)
+
 
