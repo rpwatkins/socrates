@@ -1,0 +1,53 @@
+:doctitle: 
+:subtitle:
+:description: 
+:keywords:
+:author: 
+:authorinitials: 
+:revnumber: 0.1.0
+:email: 
+:copyright: 
+:front-cover-image: 
+:title-logo-image: 
+:revdate: {docdate}
+:doctype: book
+:toc: left
+:toclevels: 3
+:stem:
+:experimental:
+:lang: en
+:secnums:
+:icons: font
+:icon-set: fi
+:source-highlighter: rouge
+:rouge-linenums-mode: inline
+:bibliography-database: references.bib
+:bibliography-style: chicago-author-date
+:imagesdir: images
+:imagesoutdir: {docdir}/images
+
+= {doctitle} : {subtitle}
+
+include::front_matter/dedication.adoc[]
+
+include::front_matter/preface.adoc[]
+
+include::chapters/part_1.adoc[]
+
+include::chapters/chapters/chapter_01.adoc[leveloffset=+1]
+
+include::back_matter/appendix.adoc[]
+
+include::back_matter/glossary.adoc[]
+
+include::back_matter/bibliography.adoc[]
+
+ifdef::backend-pdf[]
+include::back_matter/index.adoc[]
+endif::[]
+
+ifdef::backend-docbook5[]
+include::back_matter/index.adoc[]
+endif::[]
+
+include::back_matter/colophon.adoc[]

@@ -1,0 +1,4 @@
+[appendix]
+= Copyright and License
+
+appendix

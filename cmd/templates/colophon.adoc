@@ -1,0 +1,4 @@
+[colophon]
+= Colophon
+
+(C) 2019 by {author}
