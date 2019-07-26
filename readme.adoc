@@ -36,6 +36,17 @@ Download the fonts and use your operating system font tool to install the fonts.
 
 You are not required to use the default fonts. Fonts can be changed by editing the default-theme.yml file in the src/resources/pdf-styles folder.
 
+=== Optional Source highlighting
+
+Source highlighting is supported through asciidoctor, but it relies on the presence of one more package: http://rouge.jneen.net[rouge].
+
+[source,console]
+----
+gem install rouge
+----
+
+See the https://asciidoctor.org/docs/user-manual/#rouge[Asciidoctor Manual] for instructions on how to enable rouge support in Asciidoctor and how to add source blocks to an asciidoc file.
+
 === Optional Fopub support
 
 Socrates can also generate PDF files using the https://github.com/asciidoctor/asciidoctor-fopub[asciidoctor-fopub] tool-chain. See the asciidoctor-fopub github repository for instructions on installing the tool-chain. 
@@ -79,7 +90,7 @@ Download the windows release from the Releases page, extract the socrates.exe fi
 go get -u github.com/rpwatkins/socrates
 ----
 
-== Zotero integration
+== Zotero Integration
 
 Socrates supports references and bibliography generation using https://github.com/riboseinc/asciidoctor-bibliography[asciidoctor-bibliography]. For complete instructions on using asciidoctor-bibliography, see the its github page. Asciidoctor-bibliography relies on a bibtex file (src/references.bib) to populate manuscript references and a bibliography. Many programs can generate bibtex files.
 
