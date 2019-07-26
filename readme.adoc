@@ -52,20 +52,20 @@ Note: The instructions below install the 64 bit build. 32 bit builds are also av
 
 [source,console]
 ----
-$ wget https://github.com/rpwatkins/socrates/releases/download/v0.0.1/socrates_0.0.2_linux_amd64.tar.gz
-$ tar -xvzf socrates_0.0.2_linux_amd64.tar.gz
-$ sudo mv socrates /usr/local/bin/socrates
+wget https://github.com/rpwatkins/socrates/releases/download/v0.0.1/socrates_0.0.2_linux_amd64.tar.gz
+tar -xvzf socrates_0.0.2_linux_amd64.tar.gz
+sudo mv socrates /usr/local/bin/socrates
 ----
 
 ==== MacOS
 
 [source,console]
 ----
-$ curl -OL https://github.com/rpwatkins/rpwatkins/releases/download/v0.0.1/socrates_0.0.2_darwin_amd64.tar.gz
-$ tar -xvzf socrates_0.0.2_darwin_amd64.tar.gz
-$ sudo mv socrates /usr/local/bin/socrates
+curl -OL https://github.com/rpwatkins/rpwatkins/releases/download/v0.0.1/socrates_0.0.2_darwin_amd64.tar.gz
+tar -xvzf socrates_0.0.2_darwin_amd64.tar.gz
+sudo mv socrates /usr/local/bin/socrates
 # or if you have ~/bin folder setup in the environment PATH variable
-$ mv buffalo ~/bin/socrates
+mv buffalo ~/bin/socrates
 ----
 
 ==== Windows
