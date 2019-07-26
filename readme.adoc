@@ -1,3 +1,5 @@
+:source-highlighter: rouge
+
 Socrates is a front-end CLI written in Go for creating manuscripts from asciidoc files. It uses the Asciidoctor tool-chain to create manuscript from a set of files. Socrates is written in Go so it produces a single executable file with no dependencies, making it easy to install and update.
 
 == Prerequisites
@@ -17,10 +19,11 @@ To install Ruby, MacOS and Linux users can use their package manager. Windows us
 
 To install the needed gems:
 
-```
+[source,console]
+----
 gem install asciidoctor asciidoctor-diagram asciidoctor-bibliography
 gem install asciidoctor-pdf --pre
-```
+----
 
 === Fonts
 
@@ -47,21 +50,23 @@ Note: The instructions below install the 64 bit build. 32 bit builds are also av
 
 ==== GNU/Linux
 
-```
+[source,console]
+----
 $ wget https://github.com/rpwatkins/socrates/releases/download/v0.0.1/socrates_0.0.2_linux_amd64.tar.gz
 $ tar -xvzf socrates_0.0.2_linux_amd64.tar.gz
 $ sudo mv socrates /usr/local/bin/socrates
-```
+----
 
 ==== MacOS
 
-```
+[source,console]
+----
 $ curl -OL https://github.com/rpwatkins/rpwatkins/releases/download/v0.0.1/socrates_0.0.2_darwin_amd64.tar.gz
 $ tar -xvzf socrates_0.0.2_darwin_amd64.tar.gz
 $ sudo mv socrates /usr/local/bin/socrates
 # or if you have ~/bin folder setup in the environment PATH variable
 $ mv buffalo ~/bin/socrates
-```
+----
 
 ==== Windows
 
@@ -69,9 +74,10 @@ Download the windows release from the Releases page, extract the socrates.exe fi
 
 === Source Install
 
-```
+[source,console]
+----
 go get -u github.com/rpwatkins/socrates
-```
+----
 
 == Zotero integration
 
@@ -102,9 +108,10 @@ Socrates accepts the following commands:
 To create a new project, create an empty folder. Socrates will use the name of this folder to name you manuscript.
 From within the new folder, initilize a new project:
 
-```
+[source,console]
+----
 socrates init
-```
+----
 
 This will create a "src/" folder containing a master.adoc, chapters folder (and a starter chapter), the back_matter folder (with a default bibliography), and image folder to store images, an assets folder (in which any other files you may want stored with the manuscript), a resources folder that contain the asciidoctor-pdf style template for the manuscript, and a blank references.bib file.
 
@@ -112,55 +119,61 @@ These source files will be used to generate html pages, PDF, or docbook5 files. 
 
 === pdf
 
-```
+[source,console]
+----
 socrates pdf
-```
+----
 
 The pdf command creates a PDF file using asciidoctor-pdf and the included default style template.
 
 === html
 
-```
+[source,console]
+----
 socrates html
-```
+----
 
 The html command creates a self-contained web page (html file). Images are inlined using the data-uri switch in asciidoctor.
 
 === fopub
 
-```
+[source,console]
+----
 socrates fopub
-```
+----
 
 The fopub command creates a PDF file using the asciidoctor-fopub tool-chain.
 
 === docbook
 
-```
+[source,console]
+----
 socrates docbook
-```
+----
 
 The docbook command creates a docbook5 compatible xml file.
 
 === clean
 
-```
+[source,console]
+----
 socrates clean
-```
+----
 
 The clean command empties all builds in the build folder.
 
 === version
 
-```
+[source,console]
+----
 socrates version
-```
+----
 
 The version command displays the current Socrates version number.
 
 == Roadmap
 
-* Syntax highlighter support (pygments.rb, rouge, coderay)
-* Mathematical formula support (asciidoctor-mathematical)
+* add command to easily add a new manuscript file (chapter, section, etc) with include directive in parent
+
 
 
