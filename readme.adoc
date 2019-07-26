@@ -173,7 +173,8 @@ The version command displays the current Socrates version number.
 
 == Roadmap
 
-* add command to easily add a new manuscript file (chapter, section, etc) with include directive in parent
+* Add command to easily add a new manuscript file (chapter, section, etc) with include directive in parent
+* More detailed documentation. 
 
 
 
