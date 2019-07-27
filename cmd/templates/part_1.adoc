@@ -1,6 +1,0 @@
-= Part One
-
-[partintro]
---
-
---

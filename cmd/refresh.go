@@ -14,8 +14,8 @@ import (
 
 var refreshCmd = &cobra.Command{
 	Use:   "refresh",
-	Short: "refresh adds missing items to an existing manuscript.",
-	Long:  `The refresh command searches for missing items and adds them to an existing manuscript.`,
+	Short: "<refresh> adds missing items to an existing manuscript.",
+	Long:  `The <refresh> command searches for missing items and adds them to an existing manuscript.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		refreshProject()
 	},

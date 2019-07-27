@@ -11,19 +11,18 @@ func InitPaths() []string {
 		filepath.Join("src", "assets"),
 		filepath.Join("src", "resources"),
 		filepath.Join("src", "resources", "pdfstyles"),
-
-		filepath.Join("src", "diagrams"),
 		filepath.Join("src", "chapters"),
-		filepath.Join("src", "chapters", "chapter_01"),
+		filepath.Join("src", "chapters", "01_chapter"),
 	}
 }
 
 func InitFileMap() map[string]string {
 	// create a map from a file name to a destination fold
-	back := filepath.Join("src", "back_matter")
-	front := filepath.Join("src", "front_matter")
+	src := "src"
+	back := filepath.Join(src, "back_matter")
+	front := filepath.Join(src, "front_matter")
 	m := make(map[string]string)
-	m["appendix.adoc"] = back
+	m["appendix.adoc.plush"] = back
 	m["bibliography.adoc"] = back
 	m["colophon.adoc"] = back
 	m["glossary.adoc"] = back
@@ -31,10 +30,10 @@ func InitFileMap() map[string]string {
 	m["preface.adoc"] = front
 	m["dedication.adoc"] = front
 	m["abstract.adoc"] = front
-	m["master.adoc"] = "src"
-	m["references.bib"] = "src"
-	m["chapter_01.adoc"] = filepath.Join("src", "chapters", "chapter_01")
-	m["default-theme.yml"] = filepath.Join("src", "resources", "pdfstyles")
-	m["part_1.adoc"] = filepath.Join("src", "chapters")
+	m["master.adoc"] = src
+	m["references.bib"] = src
+	m["chapter.adoc.plush"] = filepath.Join(src, "chapters", "01_chapter")
+	m["default-theme.yml"] = filepath.Join(src, "resources", "pdfstyles")
+	m["part.adoc.plush"] = filepath.Join(src, "chapters")
 	return m
 }

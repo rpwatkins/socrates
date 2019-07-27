@@ -1,0 +1,6 @@
+= Part <%= number %>
+
+[partintro]
+--
+Part <%= number %> introduction.
+--

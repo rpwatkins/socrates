@@ -1,4 +1,4 @@
-:doctitle: 
+:doctitle:
 :subtitle:
 :description: 
 :keywords:
@@ -32,11 +32,13 @@ include::front_matter/dedication.adoc[]
 
 include::front_matter/preface.adoc[]
 
-include::chapters/part_1.adoc[]
+include::chapters/01_part.adoc[]
 
-include::chapters/chapters/chapter_01.adoc[leveloffset=+1]
+include::chapters/chapters/01_chapter/01_chapter.adoc[leveloffset=+1]
 
-include::back_matter/appendix.adoc[]
+// end chapters do not remove this line
+
+include::back_matter/01_appendix.adoc[]
 
 include::back_matter/glossary.adoc[]
 

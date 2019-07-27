@@ -7,8 +7,8 @@ import (
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "version displays the current version of Socrates.",
-	Long:  `The version command displays the current Socrates version..`,
+	Short: "<version> displays the current version of Socrates.",
+	Long:  `The <version> command displays the current Socrates version..`,
 	Run: func(cmd *cobra.Command, args []string) {
 		version()
 	},

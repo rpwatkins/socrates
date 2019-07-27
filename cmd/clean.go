@@ -11,8 +11,8 @@ import (
 
 var cleanCmd = &cobra.Command{
 	Use:   "clean",
-	Short: "clean deletes all build files.",
-	Long:  `The clean command deletes all the build files in the build folder.`,
+	Short: "<clean> deletes all build files.",
+	Long:  `The <clean> command deletes all the build files in the builds folder.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		clean()
 	},

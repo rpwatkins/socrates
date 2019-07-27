@@ -12,8 +12,8 @@ import (
 
 var fopubCmd = &cobra.Command{
 	Use:   "fopub",
-	Short: "fopub compiles a set of asciidoc files into a pdf manuscript.",
-	Long:  `The fopub command compiles a pdf manuscript from a set of asciidoc files using the fopub docbook toolchain.`,
+	Short: "<fopub> compiles a set of asciidoc files into a pdf manuscript.",
+	Long:  `The <fopub> command compiles a pdf manuscript from a set of asciidoc files using the fopub docbook toolchain.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		buildFopub()
 	},
@@ -36,7 +36,7 @@ func buildFopub() {
 	dest := filepath.Join("build", "fopub")
 	out := path.Base(cwd)
 
-	command := "asciidoctor"
+	command := AD
 	args := []string{
 		source,
 		"--out-file=" + out + ".xml",

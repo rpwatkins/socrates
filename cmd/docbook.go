@@ -12,8 +12,8 @@ import (
 
 var docbookCmd = &cobra.Command{
 	Use:   "docbook",
-	Short: "docbook compiles a set of asciidoc files into a docbook5 file.",
-	Long:  `The docbook command compiles a docbook5 file from a set of asciidoc files.`,
+	Short: "<docbook> compiles a set of asciidoc files into a docbook5 file.",
+	Long:  `The <docbook> command compiles a docbook5 file from a set of asciidoc files.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		buildDocbook()
 	},
@@ -29,14 +29,14 @@ func buildDocbook() {
 	// destination is the build folder under the cwd
 	cwd, err := os.Getwd()
 	if err != nil {
-		log.Error("could not get curent directory")
+		log.Error("could not get current directory")
 		os.Exit(1)
 	}
 	source := filepath.Join("src", "master.adoc")
 	dest := filepath.Join("build", "docbook")
 	out := path.Base(cwd)
 
-	command := "asciidoctor"
+	command := AD
 	args := []string{
 		source,
 		"--out-file=" + out + ".xml",

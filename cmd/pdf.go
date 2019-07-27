@@ -12,8 +12,8 @@ import (
 
 var pdfCmd = &cobra.Command{
 	Use:   "pdf",
-	Short: "pdf compiles a set of asciidoc files into a pdf manuscript.",
-	Long:  `The pdf command compiles a pdf manuscript from a set of asciidoc files.`,
+	Short: "<pdf> compiles a set of asciidoc files into a pdf manuscript.",
+	Long:  `The <pdf> command compiles a pdf manuscript from a set of asciidoc files.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		buildPDF()
 	},
@@ -29,7 +29,7 @@ func buildPDF() {
 	// destination is the build folder under the cwd
 	cwd, err := os.Getwd()
 	if err != nil {
-		log.Error("could not get curent directory")
+		log.Error("could not get current directory")
 		os.Exit(1)
 	}
 	source := filepath.Join("src", "master.adoc")
@@ -37,7 +37,7 @@ func buildPDF() {
 	styles := filepath.Join("src", "resources", "pdfstyles")
 	out := path.Base(cwd)
 
-	command := "asciidoctor"
+	command := AD
 	args := []string{
 		source,
 		"--out-file=" + out,
