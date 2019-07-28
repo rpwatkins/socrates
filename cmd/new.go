@@ -190,9 +190,8 @@ func createItem(item, name, dest, include string, fs afero.Fs) error {
 	}
 	log.Infof("%s.adoc created at %s", name, dest)
 	fmt.Printf(`The following include directive has been added to the end of master.adoc:
-
-	%s
+		%s
 		
-	Please move it to the correct place in master.adoc.`, include)
+Please move it to the correct place in master.adoc.`, include)
 	return nil
 }
