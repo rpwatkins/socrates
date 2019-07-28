@@ -2,6 +2,26 @@ package cmd
 
 import "path/filepath"
 
+func ItemSingleTypes() []string {
+	return []string{
+		"abstract",
+		"bibliography",
+		"colophon",
+		"dedication",
+		"glossary",
+		"index",
+		"preface",
+	}
+}
+
+func ItemMultipleTypes() []string {
+	return []string{
+		"appendix",
+		"part",
+		"chapter",
+	}
+}
+
 func InitPaths() []string {
 	return []string{
 		"src",
@@ -11,8 +31,8 @@ func InitPaths() []string {
 		filepath.Join("src", "assets"),
 		filepath.Join("src", "resources"),
 		filepath.Join("src", "resources", "pdfstyles"),
-		filepath.Join("src", "chapters"),
-		filepath.Join("src", "chapters", "01_chapter"),
+		filepath.Join("src", "parts"),
+		filepath.Join("src", "parts", "01_part"),
 	}
 }
 
@@ -32,8 +52,8 @@ func InitFileMap() map[string]string {
 	m["abstract.adoc"] = front
 	m["master.adoc"] = src
 	m["references.bib"] = src
-	m["chapter.adoc.plush"] = filepath.Join(src, "chapters", "01_chapter")
+	m["chapter.adoc.plush"] = filepath.Join(src, "parts", "01_part")
 	m["default-theme.yml"] = filepath.Join(src, "resources", "pdfstyles")
-	m["part.adoc.plush"] = filepath.Join(src, "chapters")
+	m["part.adoc.plush"] = filepath.Join(src, "parts", "01_part")
 	return m
 }

@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strconv"
 
 	"github.com/gobuffalo/packr/v2"
 	"github.com/gobuffalo/plush"
@@ -17,7 +16,7 @@ import (
 var newCmd = &cobra.Command{
 	Use:   "new [item]",
 	Short: "new creates a new element of a manuscript.",
-	Long: `The new command creates elements of a manuscript. Supported values"
+	Long: `The new command creates elements of a manuscript. Supported [item] values:"
 
 	Single instance elements:
 
@@ -29,419 +28,171 @@ var newCmd = &cobra.Command{
 	index
 	preface
 
-	Autonumbered elements
+	Auto-numbered elements
+
 	part
 	chapter
 	appendix
 	`,
-	Run: func(cmd *cobra.Command, args []string) {
-		initProject()
-	},
 }
 
 // new part command
 var newPartCmd = &cobra.Command{
-	Use:   "part",
+	Use:   "part [name]",
 	Short: "create a new manuscript part.",
-	Long:  `The <new part> command creates a new auto-numbered part for a manuscript.`,
+	Long:  `The <new part> command creates a new manuscript part using the name entered.`,
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		newPart()
+		// default file system
+		newPart(afero.NewOsFs(), args)
 	},
 }
 
 // new chapter command
 var newChapterCmd = &cobra.Command{
-	Use:   "chapter",
+	Use:   "chapter [name] [part name]",
 	Short: "<chapter> creates a new chapter in the part entered.",
-	Long:  `The <new chapter> command creates a new auto-numbered chapter for (a part of) a manuscript.`,
+	Long:  `The <new chapter [name] [part name]> command creates a new chapter to manuscript part.`,
+	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		newChapter()
+		// default file system
+		newChapter(afero.NewOsFs(), args)
 	},
 }
 
 // new appendix command
 var newAppendixCmd = &cobra.Command{
-	Use:   "appendix",
+	Use:   "appendix [name]",
 	Short: "create a new appendix.",
-	Long:  `The <new appendix> command creates a new autonumbered appendix for a manuscript.`,
+	Long:  `The <new appendix [name]> command creates a new appendix for a manuscript.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		newAppendix()
-	},
-}
-
-// new abstract command
-var newAbstractCmd = &cobra.Command{
-	Use:   "abstract",
-	Short: "<abstract> creates a new abstract.",
-	Long:  `The <new abstract> command creates a new abstract for a manuscript.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		newItem("abstract")
-	},
-}
-
-// new bibiliography command
-var newBibliographyCmd = &cobra.Command{
-	Use:   "bibliography",
-	Short: "<bibliography> creates a new bibliography.",
-	Long:  `The <new bib> command creates a new bibliography for a manuscript.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		newItem("bibliography")
-	},
-}
-
-// new bibliography command
-var newColophonCmd = &cobra.Command{
-	Use:   "colophon",
-	Short: "<colophon> creates a new colophon.",
-	Long:  `The <new colophon> command creates a new colophon for a manuscript.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		newItem("colophon")
-	},
-}
-
-// new dedication command
-var newDedicationCmd = &cobra.Command{
-	Use:   "dedication",
-	Short: "<dedication> creates a new dedication.",
-	Long:  `The <new dedication> command creates a new dedication for a manuscript.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		newItem("dedication")
-	},
-}
-
-// new glossary command
-var newGlossaryCmd = &cobra.Command{
-	Use:   "glossary",
-	Short: "<glossary> creates a new glossary.",
-	Long:  `The <new glossaru> command creates a new glossary for a manuscript.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		newItem("glossary")
-	},
-}
-
-// new index command
-var newIndexCmd = &cobra.Command{
-	Use:   "index",
-	Short: "<index> creates a new index.",
-	Long:  `The <new index> command creates a new index for a manuscript.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		newItem("index")
-	},
-}
-
-// new preface command
-var newPrefaceCmd = &cobra.Command{
-	Use:   "preface",
-	Short: "<preface> creates a new index.",
-	Long:  `The <new preface> command creates a new preface for a manuscript.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		newItem("preface")
+		// default file system
+		newAppendix(afero.NewOsFs(), args)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(initCmd)
+	rootCmd.AddCommand(newCmd)
 
 	// subcommands -- part, chapter, bibliography, appendix, index, glossary, colophon, dedication, appendix, abstract, preface
 	newCmd.AddCommand(newPartCmd)
 	newCmd.AddCommand(newChapterCmd)
 	newCmd.AddCommand(newAppendixCmd)
-	newCmd.AddCommand(newAbstractCmd)
-	newCmd.AddCommand(newBibliographyCmd)
-	newCmd.AddCommand(newColophonCmd)
-	newCmd.AddCommand(newDedicationCmd)
-	newCmd.AddCommand(newGlossaryCmd)
-	newCmd.AddCommand(newIndexCmd)
-	newCmd.AddCommand(newPrefaceCmd)
+
 }
 
-func newPart() {
-
-	// default file system
-	var fs = afero.NewOsFs()
-
-	// find existing parts to get new part number
-	files, err := afero.ReadDir(fs, filepath.Join("src", "chapters"))
-	if err != nil {
-		log.Error(err)
-		os.Exit(1)
-	}
-	parts := []int{}
-
-	for _, f := range files {
-		file := f.Name()
-		if file[2:7] == "_part" {
-			value, err := strconv.Atoi(file[:2])
-			if err != nil {
-				log.Error(err)
-			}
-			parts = append(parts, value)
-		}
-	}
-
-	// get most recent part number
-	var largerNumber, temp int
-	for _, element := range parts {
-		if element > temp {
-			temp = element
-			largerNumber = temp
-		}
-	}
-	newNum := largerNumber + 1
-	newName := ""
-	if newNum < 10 {
-		newName = fmt.Sprintf("0%d_part.adoc", newNum)
-	} else {
-		newName = fmt.Sprintf("%d_part.adoc", newNum)
-	}
-
+func newPart(fs afero.Fs, args []string) {
+	name := args[0]
 	// check if exists
-	p := filepath.Join("src", "chapters", newName)
-	exists, err := afero.Exists(fs, p)
+	path := filepath.Join("src", "parts", name)
+	exists, err := afero.Exists(fs, filepath.Join(path, name+".adoc"))
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
 	if exists {
-		log.Errorf("%s already exists", newName)
+		log.Errorf("%s already exists", name+".adoc")
 		os.Exit(1)
 	}
+	// crerate folder
+	if err := fs.Mkdir(path, 0755); err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+	include := fmt.Sprintf("\n// TOO: move me\n\ninclude::parts/%s/%s.adoc", name, name)
+
+	if err := createItem("part", name+".adoc", path, include, fs); err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+}
+
+func newChapter(fs afero.Fs, args []string) {
+	name := args[0]
+	part := args[1]
+	// check if exists
+	path := filepath.Join("src", "parts", part)
+	log.Debug(path)
+	exists, err := afero.Exists(fs, filepath.Join(path, name+".adoc"))
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+	if exists {
+		log.Errorf("%s already exists", name+".adoc")
+		os.Exit(1)
+	}
+	include := fmt.Sprintf("\n// TOO: move me\n\ninclude::parts/%s/%s.adoc", part, name)
+
+	if err := createItem("chapter", name+".adoc", path, include, fs); err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+}
+
+func newAppendix(fs afero.Fs, args []string) {
+	name := args[0]
+	// check if exists
+	path := filepath.Join("src", "back_matter")
+	exists, err := afero.Exists(fs, filepath.Join(path, name+".adoc"))
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+	if exists {
+		log.Errorf("%s already exists", name+".adoc")
+		os.Exit(1)
+	}
+	include := fmt.Sprintf("\n// TOO: move me\n\ninclude::back_matter/%s.adoc", name)
+
+	if err := createItem("appendix", name+".adoc", path, include, fs); err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+}
+
+func createItem(item, name, dest, include string, fs afero.Fs) error {
 
 	// get part template and dave it as new part in chapters folder
 	box := packr.New("assets", "./templates")
-	file, err := box.Find("part_01.adoc")
+	file, err := box.Find(fmt.Sprintf("%s.adoc.plush", item))
 	if err != nil {
-		log.Error(err.Error())
+		return err
 	}
 
 	// run through plush and add chapter title
 	ctx := plush.NewContext()
-	ctx.Set("number", NumberToWord(newNum))
+	ctx.Set("title", name)
 
 	s, err := plush.Render(string(file), ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	s2 := []byte(s)
 
 	// copy file to destination
-	if err := afero.WriteReader(fs, filepath.Join("src", "chapters", newName), bytes.NewReader(s2)); err != nil {
-		log.Error(err.Error())
+	if err := afero.WriteReader(fs, filepath.Join(dest, name), bytes.NewReader(s2)); err != nil {
+		return err
 	}
-	log.Infof("%s created at src/chapters", newName)
-	fmt.Printf(`Please add the following inlude directive to the proper place in your master.adoc file.
-
-	include::chapters/%s[]`, newName)
-
-}
-
-func newAppendix() {
-
-	// default file system
-	var fs = afero.NewOsFs()
-
-	// find existing parts to get new part number
-	files, err := afero.ReadDir(fs, filepath.Join("src", "back_matter"))
+	// add new item to end of master.adoc
+	master, err := afero.ReadFile(fs, filepath.Join("src", "master.adoc"))
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
-	parts := []int{}
+	m := string(master)
+	n := fmt.Sprintf("%s\n\n%s", m, include)
 
-	for _, f := range files {
-		file := f.Name()
-		if file[2:11] == "_appendix" {
-			value, err := strconv.Atoi(file[:2])
-			if err != nil {
-				log.Error(err)
-			}
-			parts = append(parts, value)
-		}
-	}
-
-	// get most recent part number
-	var largerNumber, temp int
-	for _, element := range parts {
-		if element > temp {
-			temp = element
-			largerNumber = temp
-		}
-	}
-
-	newNum := largerNumber + 1
-	newName := ""
-	if newNum < 10 {
-		newName = fmt.Sprintf("0%d_appendix.adoc", newNum)
-	} else {
-		newName = fmt.Sprintf("%d_appendix.adoc", newNum)
-	}
-
-	// check if exists
-	p := filepath.Join("src", "back_matter", newName)
-	exists, err := afero.Exists(fs, p)
-	if err != nil {
-		log.Error(err)
+	err2 := afero.WriteFile(fs, filepath.Join("src", "master.adoc"), []byte(n), 0777)
+	if err2 != nil {
+		log.Error(err2)
 		os.Exit(1)
 	}
-	if exists {
-		log.Errorf("%s already exists", newName)
-		os.Exit(1)
-	}
+	log.Infof("%s.adoc created at %s", name, dest)
+	fmt.Printf(`The following include directive has been added to the end of master.adoc:
 
-	// get part template and dave it as new part in chapters folder
-	box := packr.New("assets", "./templates")
-	file, err := box.Find("appendix.adoc.plush")
-	if err != nil {
-		log.Error(err.Error())
-	}
-
-	// run through plush and add chapter title
-	ctx := plush.NewContext()
-	ctx.Set("number", NumberToWord(newNum))
-
-	s, err := plush.Render(string(file), ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-	s2 := []byte(s)
-
-	// copy file to destination
-	if err := afero.WriteReader(fs, filepath.Join("src", "back_matter", newName), bytes.NewReader(s2)); err != nil {
-		log.Error(err.Error())
-	}
-	log.Infof("%s created at src/back_matter", newName)
-	fmt.Printf(`Please add the following inlude directive to the proper place in your master.adoc file.
-
-	include::back_matter/%s[]`, newName)
-
-}
-
-func newChapter() {
-
-	// default file system
-	var fs = afero.NewOsFs()
-
-	// find existing parts to get new part number
-	files, err := afero.ReadDir(fs, filepath.Join("src", "chapters"))
-	if err != nil {
-		log.Error(err)
-		os.Exit(1)
-	}
-	parts := []int{}
-
-	for _, f := range files {
-		file := f.Name()
-		if file[2:10] == "_chapter" {
-			value, err := strconv.Atoi(file[:2])
-			if err != nil {
-				log.Error(err)
-			}
-			parts = append(parts, value)
-		}
-	}
-
-	// get most recent part number
-	var largerNumber, temp int
-	for _, element := range parts {
-		if element > temp {
-			temp = element
-			largerNumber = temp
-		}
-	}
-	newNum := largerNumber + 1
-	newName := ""
-	newFolder := ""
-	if newNum < 10 {
-		newName = fmt.Sprintf("0%d_chapter.adoc", newNum)
-		newFolder = fmt.Sprintf("0%d_chapter", newNum)
-	} else {
-		newName = fmt.Sprintf("%d_chapter.adoc", newNum)
-		newFolder = fmt.Sprintf("%d_chapter", newNum)
-	}
-
-	// check if exists
-	p := filepath.Join("src", "chapters", newFolder, newName)
-	exists, err := afero.Exists(fs, p)
-	if err != nil {
-		log.Error(err)
-		os.Exit(1)
-	}
-	if exists {
-		log.Errorf("%s already exists", newName)
-		os.Exit(1)
-	}
-
-	// get part template and dave it as new part in chapters folder
-	box := packr.New("assets", "./templates")
-	file, err := box.Find("chapter.adoc.plush")
-	if err != nil {
-		log.Error(err.Error())
-	}
-	// run through plush and add chapter title
-	ctx := plush.NewContext()
-	ctx.Set("number", NumberToWord(newNum))
-
-	s, err := plush.Render(string(file), ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-	s2 := []byte(s)
-
-	// copy file to destination
-	if err := afero.WriteReader(fs, filepath.Join("src", "chapters", newFolder, newName), bytes.NewReader(s2)); err != nil {
-		log.Error(err.Error())
-	}
-
-	log.Infof("%s created at src/chapters/%s", newName, newFolder)
-	fmt.Printf(`Please add the following inlude directive to the proper place in your master.adoc file.
-
-	include::chapters/%s[]`, newName)
-}
-
-func newItem(name string) {
-
-	// default file system
-	var fs = afero.NewOsFs()
-
-	// set save path
-	path := ""
-	includePath := ""
-	newName := fmt.Sprintf("%s.adoc", name)
-
-	if name == "abstract" || name == "dedication" || name == "preface" {
-		path = filepath.Join("src", "front_matter")
-		includePath = "front_matter"
-	} else {
-		path = filepath.Join("src", "back_matter")
-		includePath = "back_matter"
-	}
-
-	// check if exists
-	exists, err := afero.Exists(fs, filepath.Join(path, newName))
-	if err != nil {
-		log.Error(err)
-		os.Exit(1)
-	}
-	if exists {
-		log.Errorf("%s already exists", name)
-		os.Exit(1)
-	}
-	// get part template and dave it as new part in chapters folder
-	box := packr.New("assets", "./templates")
-	file, err := box.Find(fmt.Sprintf("%s.adoc", name))
-	if err != nil {
-		log.Error(err.Error())
-	}
-
-	// copy file to destination
-	if err := afero.WriteReader(fs, filepath.Join(path, newName), bytes.NewReader(file)); err != nil {
-		log.Error(err.Error())
-	}
-
-	log.Infof("%s created at %s", name+".adoc", path)
-	fmt.Printf(`
-	Please add the following inlude directive to the proper place in your master.adoc file.
-
-	include::%s/%s[]`, includePath, newName)
-
+	%s
+		
+	Please move it to the correct place in master.adoc.`, include)
+	return nil
 }

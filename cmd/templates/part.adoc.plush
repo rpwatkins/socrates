@@ -1,6 +1,6 @@
-= Part <%= number %>
+= <%= title %>
 
 [partintro]
 --
-Part <%= number %> introduction.
+<%= title %>: introduction.
 --

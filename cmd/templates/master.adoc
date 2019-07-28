@@ -32,9 +32,9 @@ include::front_matter/dedication.adoc[]
 
 include::front_matter/preface.adoc[]
 
-include::chapters/01_part.adoc[]
+include::parts/01_part/01_part.adoc[]
 
-include::chapters/chapters/01_chapter/01_chapter.adoc[leveloffset=+1]
+include::parts/01_part/01_chapter.adoc[leveloffset=+1]
 
 // end chapters do not remove this line
 

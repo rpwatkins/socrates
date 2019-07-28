@@ -18,7 +18,9 @@ var initCmd = &cobra.Command{
 	Short: "<init> creates a new manuscript.",
 	Long:  `The <init> command creates a new manuscript.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		initProject()
+		// default file system
+		var fs = afero.NewOsFs()
+		initProject(fs)
 	},
 }
 
@@ -26,19 +28,10 @@ func init() {
 	rootCmd.AddCommand(initCmd)
 }
 
-func initProject() {
+func initProject(fs afero.Fs) {
 
-	// default file system
-	var fs = afero.NewOsFs()
-
-	// get the current working directory
-	cwd, err := os.Getwd()
-	if err != nil {
-		log.Error(err.Error())
-		os.Exit(1)
-	}
 	// confirm current working directory is empty
-	empty, err := afero.IsEmpty(fs, cwd)
+	empty, err := afero.IsEmpty(fs, ".")
 	if err != nil {
 		log.Error(err.Error())
 		os.Exit(1)
@@ -53,7 +46,7 @@ func initProject() {
 	box := packr.New("assets", "./templates")
 
 	for _, v := range InitPaths() {
-		if err := fs.Mkdir(filepath.Join(cwd, v), 0755); err != nil {
+		if err := fs.Mkdir(v, 0755); err != nil {
 			log.Error(err.Error())
 		}
 	}
@@ -68,7 +61,7 @@ func initProject() {
 			// run through plush with number = 1
 
 			ctx := plush.NewContext()
-			ctx.Set("number", "One")
+			ctx.Set("title", v)
 
 			s, err := plush.Render(string(file), ctx)
 			if err != nil {
@@ -81,17 +74,16 @@ func initProject() {
 			name := "01_" + k[0:len(k)-len(extension)]
 
 			// copy file to destination
-			if err := afero.WriteReader(fs, filepath.Join(cwd, v, name), bytes.NewReader(s2)); err != nil {
+			if err := afero.WriteReader(fs, filepath.Join(v, name), bytes.NewReader(s2)); err != nil {
 				log.Error(err.Error())
 			}
 		} else {
 			// copy file to destination
-			if err := afero.WriteReader(fs, filepath.Join(cwd, v, k), bytes.NewReader(file)); err != nil {
+			if err := afero.WriteReader(fs, filepath.Join(v, k), bytes.NewReader(file)); err != nil {
 				log.Error(err.Error())
 			}
 		}
-
 	}
-	log.Infof("Socrates project created at %s", cwd)
+	log.Info("Socrates project created.")
 
 }
