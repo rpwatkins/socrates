@@ -59,7 +59,7 @@ func Test_NewChapter(t *testing.T) {
 	// check master.adoc
 	master, err := afero.ReadFile(fs, filepath.Join("src", "master.adoc"))
 	assert.NoError(err)
-	assert.True(strings.Contains(string(master), "test_chapter"))
+	assert.True(strings.Contains(string(master), "include::parts/01_part/test_chapter"))
 
 }
 
@@ -85,6 +85,6 @@ func Test_NewAppendix(t *testing.T) {
 	// check master.adoc
 	master, err := afero.ReadFile(fs, filepath.Join("src", "master.adoc"))
 	assert.NoError(err)
-	assert.True(strings.Contains(string(master), "test_appendix"))
+	assert.True(strings.Contains(string(master), "include::back_matter/test_appendix"))
 
 }

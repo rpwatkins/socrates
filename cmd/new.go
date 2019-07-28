@@ -99,9 +99,9 @@ func newPart(fs afero.Fs, args []string) {
 		log.Error(err)
 		os.Exit(1)
 	}
-	include := fmt.Sprintf("\n// TOO: move me\n\ninclude::parts/%s/%s.adoc", name, name)
+	include := fmt.Sprintf("\n// TODO: move me\n\ninclude::parts/%s/%s.adoc[]", name, name)
 
-	if err := createItem("part", name+".adoc", path, include, fs); err != nil {
+	if err := createItem("part", name, path, include, fs); err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
@@ -122,9 +122,9 @@ func newChapter(fs afero.Fs, args []string) {
 		log.Errorf("%s already exists", name+".adoc")
 		os.Exit(1)
 	}
-	include := fmt.Sprintf("\n// TOO: move me\n\ninclude::parts/%s/%s.adoc", part, name)
+	include := fmt.Sprintf("\n// TODO: move me\n\ninclude::parts/%s/%s.adoc[]", part, name)
 
-	if err := createItem("chapter", name+".adoc", path, include, fs); err != nil {
+	if err := createItem("chapter", name, path, include, fs); err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
@@ -143,9 +143,9 @@ func newAppendix(fs afero.Fs, args []string) {
 		log.Errorf("%s already exists", name+".adoc")
 		os.Exit(1)
 	}
-	include := fmt.Sprintf("\n// TOO: move me\n\ninclude::back_matter/%s.adoc", name)
+	include := fmt.Sprintf("\n// TODO: move me\n\ninclude::back_matter/%s.adoc[]", name)
 
-	if err := createItem("appendix", name+".adoc", path, include, fs); err != nil {
+	if err := createItem("appendix", name, path, include, fs); err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
@@ -171,7 +171,7 @@ func createItem(item, name, dest, include string, fs afero.Fs) error {
 	s2 := []byte(s)
 
 	// copy file to destination
-	if err := afero.WriteReader(fs, filepath.Join(dest, name), bytes.NewReader(s2)); err != nil {
+	if err := afero.WriteReader(fs, filepath.Join(dest, name+".adoc"), bytes.NewReader(s2)); err != nil {
 		return err
 	}
 	// add new item to end of master.adoc
