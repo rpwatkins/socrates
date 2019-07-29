@@ -29,19 +29,11 @@
 = {doctitle} : {subtitle}
 
 include::front_matter/dedication.adoc[]
-
 include::front_matter/preface.adoc[]
-
 include::parts/01_part/01_part.adoc[]
-
 include::parts/01_part/01_chapter.adoc[leveloffset=+1]
-
-// end chapters do not remove this line
-
 include::back_matter/01_appendix.adoc[]
-
 include::back_matter/glossary.adoc[]
-
 include::back_matter/bibliography.adoc[]
 
 ifdef::backend-pdf[]

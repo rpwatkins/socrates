@@ -16,23 +16,7 @@ import (
 var newCmd = &cobra.Command{
 	Use:   "new [item]",
 	Short: "new creates a new element of a manuscript.",
-	Long: `The new command creates elements of a manuscript. Supported [item] values:"
-
-	Single instance elements:
-
-	abstract
-	bibliography
-	colophon
-	dedication
-	glossary
-	index
-	preface
-
-	Auto-numbered elements
-
-	part
-	chapter
-	appendix
+	Long: `The new command creates elements of a manuscript. Supported [item] values: part, chapter, appendix
 	`,
 }
 
@@ -40,7 +24,7 @@ var newCmd = &cobra.Command{
 var newPartCmd = &cobra.Command{
 	Use:   "part [name]",
 	Short: "create a new manuscript part.",
-	Long:  `The <new part> command creates a new manuscript part using the name entered.`,
+	Long:  `The <new part [name]> command creates a new manuscript part using the name entered.`,
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		// default file system
@@ -99,7 +83,7 @@ func newPart(fs afero.Fs, args []string) {
 		log.Error(err)
 		os.Exit(1)
 	}
-	include := fmt.Sprintf("\n// TODO: move me\n\ninclude::parts/%s/%s.adoc[]", name, name)
+	include := fmt.Sprintf("\n\n// TODO: move me\ninclude::parts/%s/%s.adoc[]", name, name)
 
 	if err := createItem("part", name, path, include, fs); err != nil {
 		log.Error(err)
@@ -122,7 +106,7 @@ func newChapter(fs afero.Fs, args []string) {
 		log.Errorf("%s already exists", name+".adoc")
 		os.Exit(1)
 	}
-	include := fmt.Sprintf("\n// TODO: move me\n\ninclude::parts/%s/%s.adoc[]", part, name)
+	include := fmt.Sprintf("\n\n// TODO: move me\ninclude::parts/%s/%s.adoc[]", part, name)
 
 	if err := createItem("chapter", name, path, include, fs); err != nil {
 		log.Error(err)
@@ -143,7 +127,7 @@ func newAppendix(fs afero.Fs, args []string) {
 		log.Errorf("%s already exists", name+".adoc")
 		os.Exit(1)
 	}
-	include := fmt.Sprintf("\n// TODO: move me\n\ninclude::back_matter/%s.adoc[]", name)
+	include := fmt.Sprintf("\n\n// TODO: move me\ninclude::back_matter/%s.adoc[]", name)
 
 	if err := createItem("appendix", name, path, include, fs); err != nil {
 		log.Error(err)
