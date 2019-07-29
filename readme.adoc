@@ -1,3 +1,5 @@
+image::https://app.fossa.com/api/projects/git%2Bgithub.com%2Frpwatkins%2Fsocrates.svg?type=shield[]
+
 == SOCRATES
 === Easing the use of Asciidoctor to produce manuscripts.
 
