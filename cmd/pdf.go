@@ -48,6 +48,7 @@ func buildPDF() {
 		"--quiet",
 		"-a pdf-stylesdir=" + styles,
 		"-a pdf-style=default",
+		"-a data-uri",
 		"--destination-dir=" + dest,
 	}
 	cmd := exec.Command(command, args...)
