@@ -49,6 +49,7 @@ func buildFopub() {
 	}
 	cmd := exec.Command(command, args...)
 	if err := cmd.Run(); err != nil {
+		log.Error(err)
 		log.WithFields(log.Fields{
 			"source": source,
 		}).Errorf("%s docbook file could not be built", source)
@@ -61,6 +62,7 @@ func buildFopub() {
 	}
 	cmd2 := exec.Command(command2, args2...)
 	if err := cmd2.Run(); err != nil {
+		log.Error(err)
 		log.WithFields(log.Fields{
 			"source": source,
 		}).Errorf("%s fopub pdf could not be built", source)

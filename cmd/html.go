@@ -50,6 +50,7 @@ func buildHTML() {
 	}
 	cmd := exec.Command(command, args...)
 	if err := cmd.Run(); err != nil {
+		log.Error(err)
 		log.WithFields(log.Fields{
 			"source": source,
 		}).Errorf("%s HTML page could not be built", source)
