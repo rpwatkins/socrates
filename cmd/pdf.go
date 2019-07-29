@@ -44,7 +44,7 @@ func buildPDF() {
 		"--require=asciidoctor-diagram",
 		"--require=asciidoctor-pdf",
 		"--require=asciidoctor-bibliography",
-		"--backend=docbook5",
+		"--backend=pdf",
 		"--quiet",
 		"-a pdf-stylesdir=" + styles,
 		"-a pdf-style=default",
