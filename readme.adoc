@@ -1,6 +1,7 @@
 image::https://app.fossa.com/api/projects/git%2Bgithub.com%2Frpwatkins%2Fsocrates.svg?type=shield[]
 
 == SOCRATES
+
 === Easing the use of Asciidoctor to produce manuscripts.
 
 Socrates is a front-end CLI written in Go for creating and compiling manuscripts from sets of asciidoc files. Socrates is written in Go so it produces a single executable file with no dependencies, making it easy to install and update.
@@ -10,3 +11,13 @@ Asciidoctor is a well-designed language for producing rich and complicated manus
 Socrates assists in setting up a manuscript project with a default structure, adding new manuscript elements, and compiling those files into a final manuscript in PDF or HTML format.
 
 Best of all, every file needed to construct a manuscript is entirely text, which means it can be easily versioned in Git!
+
+=== Getting Started
+
+To get started, visit the https://socratesdocs.netlify.com[Socrates Documentation] page. 
+
+=== Roadmap
+
+* Further documentation
+* More PDF and HTML styles.
+* Switch to produce a chapters-only manuscript _master.adoc_ file, e.g., --chapters-only
