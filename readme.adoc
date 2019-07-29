@@ -13,7 +13,7 @@ Best of all, every file needed to construct a manuscript is entirely text, which
 
 === Getting Started
 
-To get started, visit the https://socratesdocs.netlify.com[Socrates Documentation] page. 
+To get started, visit the https://socratesdoc.netlify.com[Socrates Documentation] page. 
 
 === Roadmap
 
