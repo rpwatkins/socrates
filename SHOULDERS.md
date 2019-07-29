@@ -5,8 +5,42 @@ github.com/rpwatkins/socrates does not try to reinvent the wheel! Instead, it us
 Thank you to the following **GIANTS**:
 
 
+* [github.com/atotto/clipboard](https://godoc.org/github.com/atotto/clipboard)
+
+* [github.com/fatih/structs](https://godoc.org/github.com/fatih/structs)
+
+* [github.com/gobuffalo/helpers](https://godoc.org/github.com/gobuffalo/helpers)
+
+* [github.com/gobuffalo/packr/v2](https://godoc.org/github.com/gobuffalo/packr/v2)
+
+* [github.com/gobuffalo/plush](https://godoc.org/github.com/gobuffalo/plush)
+
+* [github.com/gobuffalo/uuid](https://godoc.org/github.com/gobuffalo/uuid)
+
+* [github.com/gobuffalo/validate](https://godoc.org/github.com/gobuffalo/validate)
+
+* [github.com/gofrs/uuid](https://godoc.org/github.com/gofrs/uuid)
+
+* [github.com/golang/protobuf](https://godoc.org/github.com/golang/protobuf)
+
+* [github.com/google/pprof](https://godoc.org/github.com/google/pprof)
+
+* [github.com/ianlancetaylor/demangle](https://godoc.org/github.com/ianlancetaylor/demangle)
+
+* [github.com/onsi/ginkgo](https://godoc.org/github.com/onsi/ginkgo)
+
+* [github.com/onsi/gomega](https://godoc.org/github.com/onsi/gomega)
+
+* [github.com/serenize/snaker](https://godoc.org/github.com/serenize/snaker)
+
 * [github.com/sirupsen/logrus](https://godoc.org/github.com/sirupsen/logrus)
 
 * [github.com/spf13/afero](https://godoc.org/github.com/spf13/afero)
 
 * [github.com/spf13/cobra](https://godoc.org/github.com/spf13/cobra)
+
+* [github.com/stretchr/testify](https://godoc.org/github.com/stretchr/testify)
+
+* [golang.org/x/arch](https://godoc.org/golang.org/x/arch)
+
+* [golang.org/x/text](https://godoc.org/golang.org/x/text)
