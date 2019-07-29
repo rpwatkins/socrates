@@ -5,8 +5,6 @@ github.com/rpwatkins/socrates does not try to reinvent the wheel! Instead, it us
 Thank you to the following **GIANTS**:
 
 
-* [github.com/atotto/clipboard](https://godoc.org/github.com/atotto/clipboard)
-
 * [github.com/fatih/structs](https://godoc.org/github.com/fatih/structs)
 
 * [github.com/gobuffalo/helpers](https://godoc.org/github.com/gobuffalo/helpers)
@@ -23,10 +21,6 @@ Thank you to the following **GIANTS**:
 
 * [github.com/golang/protobuf](https://godoc.org/github.com/golang/protobuf)
 
-* [github.com/google/pprof](https://godoc.org/github.com/google/pprof)
-
-* [github.com/ianlancetaylor/demangle](https://godoc.org/github.com/ianlancetaylor/demangle)
-
 * [github.com/onsi/ginkgo](https://godoc.org/github.com/onsi/ginkgo)
 
 * [github.com/onsi/gomega](https://godoc.org/github.com/onsi/gomega)
@@ -40,7 +34,5 @@ Thank you to the following **GIANTS**:
 * [github.com/spf13/cobra](https://godoc.org/github.com/spf13/cobra)
 
 * [github.com/stretchr/testify](https://godoc.org/github.com/stretchr/testify)
-
-* [golang.org/x/arch](https://godoc.org/golang.org/x/arch)
 
 * [golang.org/x/text](https://godoc.org/golang.org/x/text)
