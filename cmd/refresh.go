@@ -57,7 +57,7 @@ func refreshProject() {
 			log.Error(err)
 		}
 		if exists {
-			log.Infof("%s folder exists", v)
+			log.Warningf("%s folder exists", v)
 		} else {
 			if err := fs.Mkdir(filepath.Join(cwd, v), 0755); err != nil {
 				log.Error(err.Error())
@@ -73,7 +73,7 @@ func refreshProject() {
 			log.Error(err.Error())
 		}
 		if exists {
-			log.Infof("%s file exists", filepath.Join(v, k))
+			log.Warningf("%s file exists", filepath.Join(v, k))
 		} else {
 			file, err := box.Find(k)
 			if err != nil {

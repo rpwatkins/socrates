@@ -7,8 +7,6 @@
 :revnumber: 0.1.0
 :email: 
 :copyright: 
-:front-cover-image: 
-:title-logo-image: 
 :revdate: {docdate}
 :doctype: book
 :toc: left
@@ -21,7 +19,7 @@
 :icon-set: fi
 :source-highlighter: rouge
 :rouge-linenums-mode: inline
-:bibliography-database: references.bib
+:bibliography-database: src/references.bib
 :bibliography-style: chicago-author-date
 :imagesdir: images
 :imagesoutdir: {docdir}/images

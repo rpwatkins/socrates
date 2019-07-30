@@ -32,8 +32,8 @@ func buildDocbook() {
 		log.Error("could not get current directory")
 		os.Exit(1)
 	}
-	source := filepath.Join("src", "master.adoc")
-	dest := filepath.Join("build", "docbook")
+	source := filepath.Join(cwd, "src", "master.adoc")
+	dest := filepath.Join(cwd, "build", "docbook")
 	out := path.Base(cwd)
 
 	command := AD

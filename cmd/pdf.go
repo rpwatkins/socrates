@@ -32,9 +32,9 @@ func buildPDF() {
 		log.Error("could not get current directory")
 		os.Exit(1)
 	}
-	source := filepath.Join("src", "master.adoc")
-	dest := filepath.Join("build", "pdf")
-	styles := filepath.Join("src", "resources", "pdfstyles")
+	source := filepath.Join(cwd, "src", "master.adoc")
+	dest := filepath.Join(cwd, "build", "pdf")
+	styles := filepath.Join(cwd, "src", "resources", "pdfstyles")
 	out := path.Base(cwd)
 
 	command := AD
