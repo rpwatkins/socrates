@@ -24,5 +24,8 @@ changelog:
       - '^docs:'
       - '^test:'
 
-
+brews:
+  github:
+    owner: rod
+    name: homebrew-tap
 
