@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/afero"
+
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +17,7 @@ var docbookCmd = &cobra.Command{
 	Short: "docbook compiles a set of asciidoc files into a docbook5 file.",
 	Long:  `The docbook command compiles a docbook5 file from a set of asciidoc files.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		buildDocbook()
+		buildDocbook(afero.NewOsFs())
 	},
 }
 
@@ -23,7 +25,17 @@ func init() {
 	rootCmd.AddCommand(docbookCmd)
 }
 
-func buildDocbook() {
+func buildDocbook(fs afero.Fs) {
+
+	missing, err := check(fs)
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+	if missing {
+		log.Error("build failed. File(s) referenced by an include directives missing.")
+		os.Exit(1)
+	}
 
 	// buildPDF creates a manuscript from a master.adoc file in the current directory
 	// destination is the build folder under the cwd
@@ -54,5 +66,6 @@ func buildDocbook() {
 		}).Errorf("%s docbook could not be built", source)
 		os.Exit(1)
 	}
+	log.Infof("%s.xml build succeeded.", out)
 
 }

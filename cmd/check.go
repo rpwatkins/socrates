@@ -17,7 +17,10 @@ var checkCmd = &cobra.Command{
 	Short: "check analyzes the integrity of a master document.",
 	Long:  `The check command analyzes the include directives in a master document for missing files or incorrect file names.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		check(afero.NewOsFs())
+		if _, err := check(afero.NewOsFs()); err != nil {
+			log.Error(err)
+			os.Exit(1)
+		}
 	},
 }
 
@@ -30,12 +33,11 @@ func init() {
 	rootCmd.AddCommand(checkCmd)
 }
 
-func check(fs afero.Fs) {
+func check(fs afero.Fs) (bool, error) {
 	// load master.adoc
 	m, err := loadMaster(fs)
 	if err != nil {
-		log.Error(err)
-		os.Exit(1)
+		return true, err
 	}
 	// create a list of paths to check
 	paths := []string{}
@@ -52,20 +54,19 @@ func check(fs afero.Fs) {
 	for _, v := range paths {
 		exists, err := afero.Exists(fs, v)
 		if err != nil {
-			log.Error(err)
-			os.Exit(1)
+			return true, err
 		}
 		if !exists {
 			noErr = false
 			log.Warningf("%s file missing.", v)
-		} else {
-			log.Infof("%s found", v)
 		}
 	}
 	if !noErr {
 		log.Warning("some files are missing.")
+		return true, nil
 	} else {
-		log.Info("all files found.")
+		log.Info("all included files found.")
+		return false, nil
 	}
 
 }

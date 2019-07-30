@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +16,7 @@ var htmlCmd = &cobra.Command{
 	Short: "html compiles a set of asciidoc files into a pdf manuscript.",
 	Long:  `The html command compiles an html page from a set of asciidoc files.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		buildHTML()
+		buildHTML(afero.NewOsFs())
 	},
 }
 
@@ -23,7 +24,17 @@ func init() {
 	rootCmd.AddCommand(htmlCmd)
 }
 
-func buildHTML() {
+func buildHTML(fs afero.Fs) {
+
+	missing, err := check(fs)
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+	if missing {
+		log.Error("build failed. File(s) referenced by an include directives missing.")
+		os.Exit(1)
+	}
 
 	// buildPDF creates a manuscript from a master.adoc file in the current directory
 	// destination is the build folder under the cwd
@@ -54,5 +65,6 @@ func buildHTML() {
 		log.Errorf("%s HTML page could not be built", source)
 		os.Exit(1)
 	}
+	log.Infof("%s.html build succeeded.", out)
 
 }
