@@ -23,8 +23,8 @@ var newCmd = &cobra.Command{
 // new part command
 var newPartCmd = &cobra.Command{
 	Use:   "part [name]",
-	Short: "create a new manuscript part.",
-	Long:  `The <new part [name]> command creates a new manuscript part using the name entered.`,
+	Short: "new creates a new manuscript part.",
+	Long:  `The new part [name] command creates a new manuscript part using the name entered.`,
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		// default file system
@@ -35,8 +35,8 @@ var newPartCmd = &cobra.Command{
 // new chapter command
 var newChapterCmd = &cobra.Command{
 	Use:   "chapter [name] [part name]",
-	Short: "<chapter> creates a new chapter in the part entered.",
-	Long:  `The <new chapter [name] [part name]> command creates a new chapter to manuscript part.`,
+	Short: "chapter creates a new chapter in the part entered.",
+	Long:  `The new chapter [name] [part name] command creates a new chapter to manuscript part.`,
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		// default file system
@@ -47,8 +47,8 @@ var newChapterCmd = &cobra.Command{
 // new appendix command
 var newAppendixCmd = &cobra.Command{
 	Use:   "appendix [name]",
-	Short: "create a new appendix.",
-	Long:  `The <new appendix [name]> command creates a new appendix for a manuscript.`,
+	Short: "new appendix [name] creates a new appendix..",
+	Long:  `The new appendix [name] command creates a new appendix for a manuscript.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// default file system
 		newAppendix(afero.NewOsFs(), args)

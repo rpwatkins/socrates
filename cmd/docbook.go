@@ -12,8 +12,8 @@ import (
 
 var docbookCmd = &cobra.Command{
 	Use:   "docbook",
-	Short: "<docbook> compiles a set of asciidoc files into a docbook5 file.",
-	Long:  `The <docbook> command compiles a docbook5 file from a set of asciidoc files.`,
+	Short: "docbook compiles a set of asciidoc files into a docbook5 file.",
+	Long:  `The docbook command compiles a docbook5 file from a set of asciidoc files.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		buildDocbook()
 	},

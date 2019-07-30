@@ -12,8 +12,8 @@ import (
 
 var htmlCmd = &cobra.Command{
 	Use:   "html",
-	Short: "<html> compiles a set of asciidoc files into a pdf manuscript.",
-	Long:  `The <html> command compiles an html page from a set of asciidoc files.`,
+	Short: "html compiles a set of asciidoc files into a pdf manuscript.",
+	Long:  `The html command compiles an html page from a set of asciidoc files.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		buildHTML()
 	},
