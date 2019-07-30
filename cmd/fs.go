@@ -1,26 +1,13 @@
 package cmd
 
-import "path/filepath"
+import (
+	"bytes"
+	"path/filepath"
 
-func ItemSingleTypes() []string {
-	return []string{
-		"abstract",
-		"bibliography",
-		"colophon",
-		"dedication",
-		"glossary",
-		"index",
-		"preface",
-	}
-}
-
-func ItemMultipleTypes() []string {
-	return []string{
-		"appendix",
-		"part",
-		"chapter",
-	}
-}
+	"github.com/gobuffalo/packr/v2"
+	"github.com/gobuffalo/plush"
+	"github.com/spf13/afero"
+)
 
 func InitPaths() []string {
 	return []string{
@@ -56,4 +43,49 @@ func InitFileMap() map[string]string {
 	m["default-theme.yml"] = filepath.Join(src, "resources", "pdfstyles")
 	m["part.adoc.plush"] = filepath.Join(src, "parts", "01_part")
 	return m
+}
+
+func writeFS(fs afero.Fs) error {
+	box := packr.New("assets", "./templates")
+
+	for _, v := range InitPaths() {
+		if err := fs.Mkdir(v, 0755); err != nil {
+			return err
+		}
+	}
+
+	for k, v := range InitFileMap() {
+		// get file from box
+		file, err := box.Find(k)
+		if err != nil {
+			return err
+		}
+		if k[len(k)-5:] == "plush" {
+			// run through plush with number = 1
+
+			ctx := plush.NewContext()
+			ctx.Set("title", v)
+
+			s, err := plush.Render(string(file), ctx)
+			if err != nil {
+				return err
+			}
+			s2 := []byte(s)
+
+			// get name of file with .plush extension
+			extension := filepath.Ext(k)
+			name := "01_" + k[0:len(k)-len(extension)]
+
+			// copy file to destination
+			if err := afero.WriteReader(fs, filepath.Join(v, name), bytes.NewReader(s2)); err != nil {
+				return err
+			}
+		} else {
+			// copy file to destination
+			if err := afero.WriteReader(fs, filepath.Join(v, k), bytes.NewReader(file)); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }

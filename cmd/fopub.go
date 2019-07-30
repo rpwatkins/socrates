@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path"
@@ -33,7 +34,7 @@ func buildFopub() {
 		os.Exit(1)
 	}
 	source := filepath.Join("src", "master.adoc")
-	dest := filepath.Join("build", "fopub")
+	dest := filepath.Join("src", "build", "fopub")
 	out := path.Base(cwd)
 
 	command := AD
@@ -44,7 +45,7 @@ func buildFopub() {
 		"--require=asciidoctor-bibliography",
 		"--backend=docbook5",
 		"--quiet",
-		"-a imagesdir=../../src/images",
+		"-a imagesdir=images",
 		"--destination-dir=" + dest,
 	}
 	cmd := exec.Command(command, args...)
@@ -58,11 +59,11 @@ func buildFopub() {
 
 	command2 := "fopub"
 	args2 := []string{
-		"build/fopub/" + out + ".xml",
+		"src/build/fopub/" + out + ".xml",
 	}
 	cmd2 := exec.Command(command2, args2...)
 	if err := cmd2.Run(); err != nil {
-		log.Error(err)
+		fmt.Print(err)
 		log.WithFields(log.Fields{
 			"source": source,
 		}).Errorf("%s fopub pdf could not be built", source)

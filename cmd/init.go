@@ -1,15 +1,11 @@
 package cmd
 
 import (
-	"bytes"
 	"os"
-	"path/filepath"
 
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 
-	"github.com/gobuffalo/packr/v2"
-	"github.com/gobuffalo/plush"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -42,48 +38,10 @@ func initProject(fs afero.Fs) {
 	}
 
 	log.Info("Initializing Socrates project.")
-
-	box := packr.New("assets", "./templates")
-
-	for _, v := range InitPaths() {
-		if err := fs.Mkdir(v, 0755); err != nil {
-			log.Error(err.Error())
-		}
-	}
-
-	for k, v := range InitFileMap() {
-		// get file from box
-		file, err := box.Find(k)
-		if err != nil {
-			log.Error(err.Error())
-		}
-		if k[len(k)-5:] == "plush" {
-			// run through plush with number = 1
-
-			ctx := plush.NewContext()
-			ctx.Set("title", v)
-
-			s, err := plush.Render(string(file), ctx)
-			if err != nil {
-				log.Fatal(err)
-			}
-			s2 := []byte(s)
-
-			// get name of file with .plush extension
-			extension := filepath.Ext(k)
-			name := "01_" + k[0:len(k)-len(extension)]
-
-			// copy file to destination
-			if err := afero.WriteReader(fs, filepath.Join(v, name), bytes.NewReader(s2)); err != nil {
-				log.Error(err.Error())
-			}
-		} else {
-			// copy file to destination
-			if err := afero.WriteReader(fs, filepath.Join(v, k), bytes.NewReader(file)); err != nil {
-				log.Error(err.Error())
-			}
-		}
+	if err := writeFS(fs); err != nil {
+		log.Error(err)
+		log.Error("initilization failed.")
+		os.Exit(1)
 	}
 	log.Info("Socrates project created.")
-
 }

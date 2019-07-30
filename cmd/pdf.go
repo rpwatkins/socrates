@@ -33,7 +33,7 @@ func buildPDF() {
 		os.Exit(1)
 	}
 	source := filepath.Join("src", "master.adoc")
-	dest := filepath.Join("build", "pdf")
+	dest := filepath.Join("src", "build", "pdf")
 	styles := filepath.Join("src", "resources", "pdfstyles")
 	out := path.Base(cwd)
 
@@ -45,7 +45,6 @@ func buildPDF() {
 		"--require=asciidoctor-pdf",
 		"--require=asciidoctor-bibliography",
 		"--backend=pdf",
-		"--quiet",
 		"-a pdf-stylesdir=" + styles,
 		"-a pdf-style=default",
 		"-a data-uri",
