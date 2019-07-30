@@ -26,18 +26,18 @@ func init() {
 
 func clean(fs afero.Fs) {
 
-	buildDir := path.Join("src", "build")
+	buildDir := path.Join("build")
 
 	exists, err := afero.Exists(fs, buildDir)
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
-	if exists {
+	if !exists {
 		log.Warning("no build folder exists.")
 		os.Exit(1)
 	}
-	if err := removeContents(buildDir); err != nil {
+	if err := removeContents(fs, buildDir); err != nil {
 		log.Error(err)
 		log.Error("build folder could not be cleaned")
 		os.Exit(1)
@@ -45,18 +45,13 @@ func clean(fs afero.Fs) {
 
 }
 
-func removeContents(dir string) error {
-	d, err := os.Open(dir)
-	if err != nil {
-		return err
-	}
-	defer d.Close()
-	names, err := d.Readdirnames(-1)
+func removeContents(fs afero.Fs, dir string) error {
+	names, err := afero.ReadDir(fs, dir)
 	if err != nil {
 		return err
 	}
 	for _, name := range names {
-		err = os.RemoveAll(filepath.Join(dir, name))
+		err = os.RemoveAll(filepath.Join(dir, name.Name()))
 		if err != nil {
 			return err
 		}

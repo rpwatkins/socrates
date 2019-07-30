@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bytes"
-	"fmt"
 	"path/filepath"
 	"testing"
 
@@ -18,15 +17,7 @@ func TestClean(t *testing.T) {
 	// initial a project
 	initProject(fs)
 
-	count, err := afero.ReadDir(fs, "./src")
-	if err != nil {
-		log.Error(err)
-	}
-	assert.Equal(8, len(count))
-
-	fmt.Print(len(count))
-
-	// save some files in the build folder
+// save some files in the build folder
 	file := []byte(`some test for a file`)
 
 	for _, v := range []string{
@@ -41,11 +32,10 @@ func TestClean(t *testing.T) {
 
 	clean(fs)
 
-	// count2, err := afero.ReadDir(fs, "./")
-	// if err != nil {
-	// 	log.Error(err)
-	// }
-	// log.Infof("%d dirs", count2)
-	// assert.Equal(8, len(count2))
+	count, err := afero.ReadDir(fs, filepath.Join("src", "build"))
+	if err != nil {
+		log.Error(err)
+	}
+	assert.Equal(0, len(count))
 
 }

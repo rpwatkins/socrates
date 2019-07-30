@@ -33,14 +33,14 @@ func buildPDF() {
 		os.Exit(1)
 	}
 	source := filepath.Join("src", "master.adoc")
-	dest := filepath.Join("src", "build", "pdf")
+	dest := filepath.Join("build", "pdf")
 	styles := filepath.Join("src", "resources", "pdfstyles")
 	out := path.Base(cwd)
 
 	command := AD
 	args := []string{
 		source,
-		"--out-file=" + out,
+		"--out-file=" + out + ".pdf",
 		"--require=asciidoctor-diagram",
 		"--require=asciidoctor-pdf",
 		"--require=asciidoctor-bibliography",

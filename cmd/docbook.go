@@ -44,7 +44,7 @@ func buildDocbook() {
 		"--require=asciidoctor-bibliography",
 		"--backend=docbook5",
 		"--quiet",
-		"-a imagesdir=../../src/images",
+		"-a imagesdir=images",
 		"--destination-dir=" + dest,
 	}
 	cmd := exec.Command(command, args...)

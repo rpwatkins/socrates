@@ -34,7 +34,7 @@ func buildFopub() {
 		os.Exit(1)
 	}
 	source := filepath.Join("src", "master.adoc")
-	dest := filepath.Join("src", "build", "fopub")
+	dest := filepath.Join("build", "fopub")
 	out := path.Base(cwd)
 
 	command := AD
@@ -59,7 +59,7 @@ func buildFopub() {
 
 	command2 := "fopub"
 	args2 := []string{
-		"src/build/fopub/" + out + ".xml",
+		"build/fopub/" + out + ".xml",
 	}
 	cmd2 := exec.Command(command2, args2...)
 	if err := cmd2.Run(); err != nil {

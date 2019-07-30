@@ -33,7 +33,7 @@ func buildHTML() {
 		os.Exit(1)
 	}
 	source := filepath.Join("src", "master.adoc")
-	dest := filepath.Join("src", "build", "html")
+	dest := filepath.Join("build", "html")
 	out := path.Base(cwd)
 
 	command := AD
