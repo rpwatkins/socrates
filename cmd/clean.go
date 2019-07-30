@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"os"
-	"path"
 	"path/filepath"
 
 	log "github.com/sirupsen/logrus"
@@ -26,9 +25,7 @@ func init() {
 
 func clean(fs afero.Fs) {
 
-	buildDir := path.Join("build")
-
-	exists, err := afero.Exists(fs, buildDir)
+	exists, err := afero.Exists(fs, "build")
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)
@@ -37,7 +34,7 @@ func clean(fs afero.Fs) {
 		log.Warning("no build folder exists.")
 		os.Exit(1)
 	}
-	if err := removeContents(fs, buildDir); err != nil {
+	if err := removeContents(fs, "build"); err != nil {
 		log.Error(err)
 		log.Error("build folder could not be cleaned")
 		os.Exit(1)
@@ -51,7 +48,8 @@ func removeContents(fs afero.Fs, dir string) error {
 		return err
 	}
 	for _, name := range names {
-		err = os.RemoveAll(filepath.Join(dir, name.Name()))
+		n := name.Name()
+		err = os.RemoveAll(filepath.Join(dir, n))
 		if err != nil {
 			return err
 		}

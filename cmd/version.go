@@ -20,5 +20,5 @@ func init() {
 
 func version() {
 
-	log.Infof("Socrates v0.0.2")
+	log.Infof("Socrates v0.1.2")
 }
