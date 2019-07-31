@@ -59,6 +59,7 @@ func buildPDF(fs afero.Fs) {
 		"-a pdf-stylesdir=" + styles,
 		"-a pdf-style=default",
 		"-a data-uri",
+		"-a imagesoutdir=images",
 		"--destination-dir=" + dest,
 	}
 	cmd := exec.Command(command, args...)

@@ -17,12 +17,13 @@
 :secnums:
 :icons: font
 :icon-set: fi
+:mermaid: mmdc
 :source-highlighter: rouge
 :rouge-linenums-mode: inline
 :bibliography-database: src/references.bib
 :bibliography-style: chicago-author-date
 :imagesdir: images
-:imagesoutdir: {docdir}/images
+:imagesoutdir: images
 
 = {doctitle} : {subtitle}
 

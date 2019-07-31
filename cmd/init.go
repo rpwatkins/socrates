@@ -119,9 +119,17 @@ func writeFS(fs afero.Fs) error {
 			}
 			if k[len(k)-5:] == "plush" {
 				// run through plush with number = 1
+				title := ""
+				if k[:8] == "appendix" {
+					title = "Appendix"
+				} else if k[:7] == "chapter" {
+					title = "Chapter"
+				} else if k[0:4] == "part" {
+					title = "Part"
+				}
 
 				ctx := plush.NewContext()
-				ctx.Set("title", v)
+				ctx.Set("title", title)
 
 				s, err := plush.Render(string(file), ctx)
 				if err != nil {

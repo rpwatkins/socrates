@@ -56,7 +56,7 @@ func buildHTML(fs afero.Fs) {
 		"--backend=html5",
 		"--quiet",
 		"-a max-width=55em",
-		"-a data-uri",
+		"-a imagesoutdir=" + filepath.Join("src", "build", "html", "images"),
 		"--destination-dir=" + dest,
 	}
 	cmd := exec.Command(command, args...)
@@ -65,6 +65,12 @@ func buildHTML(fs afero.Fs) {
 		log.Errorf("%s HTML page could not be built", source)
 		os.Exit(1)
 	}
+
+	if err := CopyFolder(filepath.Join("src", "images"), filepath.Join("src", "build", "html", "images"), fs); err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+
 	log.Infof("%s.html build succeeded.", out)
 
 }

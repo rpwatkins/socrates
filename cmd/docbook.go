@@ -57,6 +57,7 @@ func buildDocbook(fs afero.Fs) {
 		"--backend=docbook5",
 		"--quiet",
 		"-a imagesdir=images",
+		"-a imagesoutdir=" + filepath.Join("src", "build", "docbook", "images"),
 		"--destination-dir=" + dest,
 	}
 	cmd := exec.Command(command, args...)
@@ -64,6 +65,11 @@ func buildDocbook(fs afero.Fs) {
 		log.WithFields(log.Fields{
 			"source": source,
 		}).Errorf("%s docbook could not be built", source)
+		os.Exit(1)
+	}
+
+	if err := CopyFolder(filepath.Join("src", "images"), filepath.Join("src", "build", "docbook", "images"), fs); err != nil {
+		log.Error(err)
 		os.Exit(1)
 	}
 	log.Infof("%s.xml build succeeded.", out)

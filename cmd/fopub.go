@@ -68,6 +68,11 @@ func buildFopub(fs afero.Fs) {
 		os.Exit(1)
 	}
 
+	if err := CopyFolder(filepath.Join("src", "images"), filepath.Join("src", "build", "docbook", "images"), fs); err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+
 	command2 := "fopub"
 	args2 := []string{
 		"build/fopub/" + out + ".xml",

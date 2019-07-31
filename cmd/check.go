@@ -24,32 +24,20 @@ var checkCmd = &cobra.Command{
 	},
 }
 
-type master struct {
-	Attributes map[string]string
-	Includes   []string
-}
-
 func init() {
 	rootCmd.AddCommand(checkCmd)
 }
 
 func check(fs afero.Fs) (bool, error) {
 	// load master.adoc
-	m, err := loadMaster(fs)
-	if err != nil {
-		return true, err
+
+	paths := parseMaster(fs, "master.adoc")
+	childPaths := []string{}
+	for _, p := range paths {
+		childPaths = append(childPaths, parseChild(fs, p)...)
 	}
-	// create a list of paths to check
-	paths := []string{}
-	// add location of referecnes.bib
-	paths = append(paths, strings.TrimSpace(m.Attributes["bibliography-database"]))
-	// parse include directives for broken references.bib
-	for _, v := range m.Includes {
-		// split at "::"
-		res := strings.Split(v, "::")
-		path := strings.Split(res[1], "[")
-		paths = append(paths, filepath.Join("src", strings.TrimSpace(path[0])))
-	}
+	paths = append(paths, childPaths...)
+
 	noErr := true
 	for _, v := range paths {
 		exists, err := afero.Exists(fs, v)
@@ -59,6 +47,8 @@ func check(fs afero.Fs) (bool, error) {
 		if !exists {
 			noErr = false
 			log.Warningf("%s file missing.", v)
+		} else {
+			log.Infof("%s found.", v)
 		}
 	}
 	if !noErr {
@@ -71,30 +61,79 @@ func check(fs afero.Fs) (bool, error) {
 
 }
 
-func loadMaster(fs afero.Fs) (master, error) {
-	master := master{}
+func parseMaster(fs afero.Fs, file string) []string {
 
-	file, err := afero.ReadFile(fs, filepath.Join("src", "master.adoc"))
+	paths := []string{}
+	attributes := make(map[string]string)
+
+	content, err := afero.ReadFile(fs, filepath.Join("src", file))
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
-	scanner := bufio.NewScanner(strings.NewReader(string(file)))
-	lMap := make(map[string]string)
+
+	scanner := bufio.NewScanner(strings.NewReader(string(content)))
 	for scanner.Scan() {
 		line := scanner.Text()
 		if len(line) >= 1 && line[:1] == ":" {
 			// load attribute
 			atts := strings.Split(line, ":")
-			lMap[atts[1]] = atts[2]
-
+			attributes[atts[1]] = atts[2]
 		}
-		master.Attributes = lMap
+
 		if len(line) >= 7 && line[:7] == "include" {
-			// load include statement
-			master.Includes = append(master.Includes, line)
+			res := strings.Split(line, "::")
+			path := strings.Split(res[1], "[")
+			p := filepath.Join("src", strings.TrimSpace(path[0]))
+			paths = append(paths, p)
 		}
 	}
-	return master, nil
+	paths = append(paths, strings.TrimSpace(attributes["bibliography-database"]))
 
+	return paths
+
+}
+
+func parseChild(fs afero.Fs, file string) []string {
+	// recurse includes
+	paths := []string{}
+
+	exists, err := afero.Exists(fs, file)
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+
+	if exists {
+		content, err := afero.ReadFile(fs, file)
+		if err != nil {
+			log.Error(err)
+			os.Exit(1)
+		}
+		scanner := bufio.NewScanner(strings.NewReader(string(content)))
+		for scanner.Scan() {
+			line := scanner.Text()
+			if len(line) >= 9 && line[:9] == "include::" {
+
+				includeParts := strings.Split(line, "::")
+				includePath := strings.Split(includeParts[1], "[")[0]
+
+				// get chapter name from parent
+				pathParts := strings.Split(file, "/")
+				chapter := pathParts[len(pathParts)-2]
+
+				p := filepath.Join("src", "parts", chapter, includePath)
+				paths = append(paths, p)
+			}
+		}
+		// recurse paths
+		childPaths := []string{}
+		for _, p := range paths {
+			childPaths = append(childPaths, parseChild(fs, p)...)
+		}
+		paths = append(paths, childPaths...)
+
+	}
+
+	return paths
 }
