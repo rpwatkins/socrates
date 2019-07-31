@@ -43,9 +43,9 @@ func buildPDF(fs afero.Fs) {
 		log.Error("could not get current directory")
 		os.Exit(1)
 	}
-	source := filepath.Join(cwd, "src", "master.adoc")
+	source := filepath.Join(cwd, "master.adoc")
 	dest := filepath.Join(cwd, "build", "pdf")
-	styles := filepath.Join(cwd, "src", "resources", "pdfstyles")
+	styles := filepath.Join(cwd, "resources", "pdfstyles")
 	out := path.Base(cwd)
 
 	command := AD

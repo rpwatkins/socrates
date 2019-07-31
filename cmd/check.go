@@ -66,7 +66,7 @@ func parseMaster(fs afero.Fs, file string) []string {
 	paths := []string{}
 	attributes := make(map[string]string)
 
-	content, err := afero.ReadFile(fs, filepath.Join("src", file))
+	content, err := afero.ReadFile(fs, file)
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)

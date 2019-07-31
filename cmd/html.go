@@ -43,7 +43,7 @@ func buildHTML(fs afero.Fs) {
 		log.Error("could not get current directory")
 		os.Exit(1)
 	}
-	source := filepath.Join("src", "master.adoc")
+	source := filepath.Join("master.adoc")
 	dest := filepath.Join("build", "html")
 	out := path.Base(cwd)
 
@@ -56,7 +56,7 @@ func buildHTML(fs afero.Fs) {
 		"--backend=html5",
 		"--quiet",
 		"-a max-width=55em",
-		"-a imagesoutdir=" + filepath.Join("src", "build", "html", "images"),
+		"-a imagesoutdir=" + filepath.Join("build", "html", "images"),
 		"--destination-dir=" + dest,
 	}
 	cmd := exec.Command(command, args...)
@@ -66,7 +66,7 @@ func buildHTML(fs afero.Fs) {
 		os.Exit(1)
 	}
 
-	if err := CopyFolder(filepath.Join("src", "images"), filepath.Join("src", "build", "html", "images"), fs); err != nil {
+	if err := CopyFolder(filepath.Join("images"), filepath.Join("build", "html", "images"), fs); err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}

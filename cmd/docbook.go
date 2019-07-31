@@ -44,7 +44,7 @@ func buildDocbook(fs afero.Fs) {
 		log.Error("could not get current directory")
 		os.Exit(1)
 	}
-	source := filepath.Join(cwd, "src", "master.adoc")
+	source := filepath.Join(cwd, "master.adoc")
 	dest := filepath.Join(cwd, "build", "docbook")
 	out := path.Base(cwd)
 
@@ -57,7 +57,7 @@ func buildDocbook(fs afero.Fs) {
 		"--backend=docbook5",
 		"--quiet",
 		"-a imagesdir=images",
-		"-a imagesoutdir=" + filepath.Join("src", "build", "docbook", "images"),
+		"-a imagesoutdir=" + filepath.Join("build", "docbook", "images"),
 		"--destination-dir=" + dest,
 	}
 	cmd := exec.Command(command, args...)
@@ -68,7 +68,7 @@ func buildDocbook(fs afero.Fs) {
 		os.Exit(1)
 	}
 
-	if err := CopyFolder(filepath.Join("src", "images"), filepath.Join("src", "build", "docbook", "images"), fs); err != nil {
+	if err := CopyFolder(filepath.Join("images"), filepath.Join("build", "docbook", "images"), fs); err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}

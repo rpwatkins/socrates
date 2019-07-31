@@ -23,26 +23,30 @@ func TestInit(t *testing.T) {
 	}
 	// check files
 	files := []string{
-		filepath.Join("src", "master.adoc"),
-		filepath.Join("src", "references.bib"),
-		filepath.Join("src", "front_matter", "abstract.adoc"),
-		filepath.Join("src", "front_matter", "dedication.adoc"),
-		filepath.Join("src", "front_matter", "preface.adoc"),
-		filepath.Join("src", "back_matter", "01_appendix.adoc"),
-		filepath.Join("src", "back_matter", "bibliography.adoc"),
-		filepath.Join("src", "back_matter", "colophon.adoc"),
-		filepath.Join("src", "back_matter", "glossary.adoc"),
-		filepath.Join("src", "back_matter", "index.adoc"),
-		filepath.Join("src", "parts", "01_part", "01_chapter.adoc"),
-		filepath.Join("src", "resources", "pdfstyles", "default-theme.yml"),
-		filepath.Join("src", "parts", "01_part", "01_part.adoc"),
+		filepath.Join("master.adoc"),
+		filepath.Join("references.bib"),
+		filepath.Join("front_matter", "abstract.adoc"),
+		filepath.Join("front_matter", "dedication.adoc"),
+		filepath.Join("front_matter", "preface.adoc"),
+		filepath.Join("back_matter", "appendix_01.adoc"),
+		filepath.Join("back_matter", "bibliography.adoc"),
+		filepath.Join("back_matter", "colophon.adoc"),
+		filepath.Join("back_matter", "glossary.adoc"),
+		filepath.Join("back_matter", "index.adoc"),
+		filepath.Join("parts", "part_01", "chapters", "chapter_01.adoc"),
+		filepath.Join("resources", "pdfstyles", "default-theme.yml"),
+		filepath.Join("parts", "part_01", "part_01.adoc"),
 	}
 
 	for _, v := range files {
-		fmt.Printf("%s\n", v)
+
 		exists, err := afero.Exists(fs, v)
+		if !exists {
+			fmt.Printf("checking: %s\n", v)
+		}
 		assert.NoError(err)
 		assert.True(exists)
+
 	}
 
 }

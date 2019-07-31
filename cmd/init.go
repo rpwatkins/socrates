@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/gobuffalo/packr/v2"
 	"github.com/gobuffalo/plush"
@@ -24,8 +25,22 @@ var initCmd = &cobra.Command{
 	},
 }
 
+var refreshCmd = &cobra.Command{
+	Use:   "refresh",
+	Short: "<refresh> adds missing items to an existing manuscript.",
+	Long:  `The <refresh> command searches for missing items and adds them to an existing manuscript. Existing files are not over-written.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if err := writeFS(afero.NewOsFs()); err != nil {
+			log.Error(err)
+			os.Exit(1)
+		}
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(initCmd)
+	rootCmd.AddCommand(refreshCmd)
+
 }
 
 func initProject(fs afero.Fs) {
@@ -52,37 +67,33 @@ func initProject(fs afero.Fs) {
 
 func InitPaths() []string {
 	return []string{
-		"src",
-		filepath.Join("src", "front_matter"),
-		filepath.Join("src", "back_matter"),
-		filepath.Join("src", "images"),
-		filepath.Join("src", "assets"),
-		filepath.Join("src", "resources"),
-		filepath.Join("src", "resources", "pdfstyles"),
-		filepath.Join("src", "parts"),
-		filepath.Join("src", "parts", "01_part"),
+		"front_matter",
+		"back_matter",
+		"images",
+		"assets",
+		"resources",
+		filepath.Join("resources", "pdfstyles"),
+		"parts",
+		filepath.Join("parts", "part_01"),
+		filepath.Join("parts", "part_01", "chapters"),
 	}
 }
 
 func InitFileMap() map[string]string {
-	// create a map from a file name to a destination fold
-	src := "src"
-	back := filepath.Join(src, "back_matter")
-	front := filepath.Join(src, "front_matter")
 	m := make(map[string]string)
-	m["appendix.adoc.plush"] = back
-	m["bibliography.adoc"] = back
-	m["colophon.adoc"] = back
-	m["glossary.adoc"] = back
-	m["index.adoc"] = back
-	m["preface.adoc"] = front
-	m["dedication.adoc"] = front
-	m["abstract.adoc"] = front
-	m["master.adoc"] = src
-	m["references.bib"] = src
-	m["chapter.adoc.plush"] = filepath.Join(src, "parts", "01_part")
-	m["default-theme.yml"] = filepath.Join(src, "resources", "pdfstyles")
-	m["part.adoc.plush"] = filepath.Join(src, "parts", "01_part")
+	m["appendix.adoc.plush"] = "back_matter"
+	m["bibliography.adoc"] = "back_matter"
+	m["colophon.adoc"] = "back_matter"
+	m["glossary.adoc"] = "back_matter"
+	m["index.adoc"] = "back_matter"
+	m["preface.adoc"] = "front_matter"
+	m["dedication.adoc"] = "front_matter"
+	m["abstract.adoc"] = "front_matter"
+	m["master.adoc"] = "."
+	m["references.bib"] = "."
+	m["chapter.adoc.plush"] = filepath.Join("parts", "part_01", "chapters")
+	m["default-theme.yml"] = filepath.Join("resources", "pdfstyles")
+	m["part.adoc.plush"] = filepath.Join("parts", "part_01")
 	return m
 }
 
@@ -110,7 +121,7 @@ func writeFS(fs afero.Fs) error {
 			return err
 		}
 		if exists {
-			log.Warningf("%s file exists", filepath.Join(v, k))
+			log.Warningf("%s file exists.", filepath.Join(v, k))
 		} else {
 			// get file from box
 			file, err := box.Find(k)
@@ -119,13 +130,21 @@ func writeFS(fs afero.Fs) error {
 			}
 			if k[len(k)-5:] == "plush" {
 				// run through plush with number = 1
+
+				extension := filepath.Ext(k)
+				oldName := k[0 : len(k)-len(extension)]
+
 				title := ""
+				name := ""
 				if k[:8] == "appendix" {
 					title = "Appendix"
+					name = strings.Replace(oldName, "appendix", "appendix_01", 1)
 				} else if k[:7] == "chapter" {
 					title = "Chapter"
+					name = strings.Replace(oldName, "chapter", "chapter_01", 1)
 				} else if k[0:4] == "part" {
 					title = "Part"
+					name = strings.Replace(oldName, "part", "part_01", 1)
 				}
 
 				ctx := plush.NewContext()
@@ -136,23 +155,20 @@ func writeFS(fs afero.Fs) error {
 					return err
 				}
 				s2 := []byte(s)
-
-				// get name of file with .plush extension
-				extension := filepath.Ext(k)
-				name := "01_" + k[0:len(k)-len(extension)]
-
 				// copy file to destination
 				if err := afero.WriteReader(fs, filepath.Join(v, name), bytes.NewReader(s2)); err != nil {
 					return err
 				}
+				log.Infof("%s file created.", filepath.Join(v, name))
 			} else {
 				// copy file to destination
 				if err := afero.WriteReader(fs, filepath.Join(v, k), bytes.NewReader(file)); err != nil {
 					return err
 				}
+				log.Infof("%s file created.", filepath.Join(v, k))
 
 			}
-			log.Infof("%s file created.", v)
+
 		}
 	}
 	return nil
