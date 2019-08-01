@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -17,9 +18,17 @@ var checkCmd = &cobra.Command{
 	Short: "check analyzes the integrity of a master document.",
 	Long:  `The check command analyzes the include directives in a master document for missing files or incorrect file names.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if _, err := check(afero.NewOsFs()); err != nil {
+		missing, err := check(afero.NewOsFs())
+		if err != nil {
 			log.Error(err)
 			os.Exit(1)
+		}
+		if len(missing) == 0 {
+			log.Info("all included files found.")
+		} else {
+			for _, m := range missing {
+				log.Warning(m)
+			}
 		}
 	},
 }
@@ -28,36 +37,27 @@ func init() {
 	rootCmd.AddCommand(checkCmd)
 }
 
-func check(fs afero.Fs) (bool, error) {
-	// load master.adoc
+func check(fs afero.Fs) ([]string, error) {
 
+	missing := []string{}
 	paths := parseMaster(fs, "master.adoc")
 	childPaths := []string{}
+
 	for _, p := range paths {
 		childPaths = append(childPaths, parseChild(fs, p)...)
 	}
 	paths = append(paths, childPaths...)
 
-	noErr := true
 	for _, v := range paths {
 		exists, err := afero.Exists(fs, v)
 		if err != nil {
-			return true, err
+			return nil, err
 		}
 		if !exists {
-			noErr = false
-			log.Warningf("%s file missing.", v)
-		} else {
-			log.Infof("%s found.", v)
+			missing = append(missing, fmt.Sprintf("%s file missing.", v))
 		}
 	}
-	if !noErr {
-		log.Warning("some files are missing.")
-		return true, nil
-	} else {
-		log.Info("all included files found.")
-		return false, nil
-	}
+	return missing, nil
 
 }
 
@@ -84,7 +84,7 @@ func parseMaster(fs afero.Fs, file string) []string {
 		if len(line) >= 7 && line[:7] == "include" {
 			res := strings.Split(line, "::")
 			path := strings.Split(res[1], "[")
-			p := filepath.Join("src", strings.TrimSpace(path[0]))
+			p := strings.TrimSpace(path[0])
 			paths = append(paths, p)
 		}
 	}
@@ -95,7 +95,8 @@ func parseMaster(fs afero.Fs, file string) []string {
 }
 
 func parseChild(fs afero.Fs, file string) []string {
-	// recurse includes
+	extension := filepath.Ext(file)
+	parentPath := file[0 : len(file)-len(extension)]
 	paths := []string{}
 
 	exists, err := afero.Exists(fs, file)
@@ -111,19 +112,14 @@ func parseChild(fs afero.Fs, file string) []string {
 			os.Exit(1)
 		}
 		scanner := bufio.NewScanner(strings.NewReader(string(content)))
+
 		for scanner.Scan() {
 			line := scanner.Text()
 			if len(line) >= 9 && line[:9] == "include::" {
 
 				includeParts := strings.Split(line, "::")
 				includePath := strings.Split(includeParts[1], "[")[0]
-
-				// get chapter name from parent
-				pathParts := strings.Split(file, "/")
-				chapter := pathParts[len(pathParts)-2]
-
-				p := filepath.Join("src", "parts", chapter, includePath)
-				paths = append(paths, p)
+				paths = append(paths, filepath.Join(parentPath, includePath))
 			}
 		}
 		// recurse paths

@@ -31,8 +31,11 @@ func buildPDF(fs afero.Fs) {
 		log.Error(err)
 		os.Exit(1)
 	}
-	if missing {
-		log.Error("build failed. File(s) referenced by an include directives missing.")
+	if len(missing) > 0 {
+		log.Error("build failed. The following included file(s) could not be found.")
+		for _, m := range missing {
+			log.Warning(m)
+		}
 		os.Exit(1)
 	}
 

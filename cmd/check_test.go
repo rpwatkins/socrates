@@ -26,7 +26,7 @@ func TestCheck(t *testing.T) {
 	if err := afero.WriteFile(fs, filepath.Join("parts", "part_01", "chapters", "includes", "include1.adoc"), []byte(""), 0644); err != nil {
 		fmt.Print(err)
 	}
-	good, err := check(fs)
+	missing, err := check(fs)
 	assert.NoError(err)
-	assert.True(good)
+	assert.True(len(missing) == 0)
 }

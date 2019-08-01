@@ -20,7 +20,7 @@
 :mermaid: mmdc
 :source-highlighter: rouge
 :rouge-linenums-mode: inline
-:bibliography-database: src/references.bib
+:bibliography-database: references.bib
 :bibliography-style: chicago-author-date
 :imagesdir: images
 :imagesoutdir: images
@@ -29,9 +29,9 @@
 
 include::front_matter/dedication.adoc[]
 include::front_matter/preface.adoc[]
-include::parts/01_part/01_part.adoc[]
-include::parts/01_part/01_chapter.adoc[leveloffset=+1]
-include::back_matter/01_appendix.adoc[]
+include::parts/part_01/part_01.adoc[]
+include::parts/part_01/chapters/chapter_01.adoc[leveloffset=+1]
+include::back_matter/appendix_01.adoc[]
 include::back_matter/glossary.adoc[]
 include::back_matter/bibliography.adoc[]
 

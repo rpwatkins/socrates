@@ -19,4 +19,4 @@ To get started, visit the https://socratesdoc.netlify.com[Socrates Documentation
 
 * Further documentation
 * More PDF and HTML styles.
-* Switch to produce a chapters-only manuscript _master.adoc_ file, e.g., --chapters-only
+
