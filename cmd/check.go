@@ -18,18 +18,7 @@ var checkCmd = &cobra.Command{
 	Short: "check analyzes the integrity of a master document.",
 	Long:  `The check command analyzes the include directives in a master document for missing files or incorrect file names.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		missing, err := check(afero.NewOsFs())
-		if err != nil {
-			log.Error(err)
-			os.Exit(1)
-		}
-		if len(missing) == 0 {
-			log.Info("all included files found.")
-		} else {
-			for _, m := range missing {
-				log.Warning(m)
-			}
-		}
+		check(afero.NewOsFs())
 	},
 }
 
@@ -37,33 +26,65 @@ func init() {
 	rootCmd.AddCommand(checkCmd)
 }
 
-func check(fs afero.Fs) ([]string, error) {
-
-	missing := []string{}
-	paths := parseMaster(fs, "master.adoc")
-	childPaths := []string{}
-
-	for _, p := range paths {
-		childPaths = append(childPaths, parseChild(fs, p)...)
+func check(fs afero.Fs) {
+	found, missing, err := validate(afero.NewOsFs())
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
 	}
-	paths = append(paths, childPaths...)
-
-	for _, v := range paths {
-		exists, err := afero.Exists(fs, v)
-		if err != nil {
-			return nil, err
-		}
-		if !exists {
-			missing = append(missing, fmt.Sprintf("%s file missing.", v))
-		}
+	for _, m := range found {
+		log.Info(m)
 	}
-	return missing, nil
-
+	for _, m := range missing {
+		log.Warning(m)
+	}
+	if len(missing) == 0 {
+		log.Info("all included file found.")
+	} else {
+		log.Warning("some included files are missing.")
+	}
 }
 
-func parseMaster(fs afero.Fs, file string) []string {
+func missingIncludes(fs afero.Fs) []string {
+	_, missing, err := validate(fs)
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+	return missing
+}
 
-	paths := []string{}
+func validate(fs afero.Fs) ([]string, []string, error) {
+
+	missing := []string{}
+	found := []string{}
+
+	paths := parseMaster(fs, "master.adoc")
+	for k := range paths {
+		childPaths := parseChild(fs, k)
+		for j, u := range childPaths {
+			paths[j] = u
+		}
+	}
+
+	// check for all includes
+	for k, v := range paths {
+		exists, err := afero.Exists(fs, k)
+		if err != nil {
+			return nil, nil, err
+		}
+		if !exists {
+			missing = append(missing, fmt.Sprintf("%s is missing. Correct the include directive in %s.", k, v))
+		} else {
+			found = append(found, fmt.Sprintf("%s found. Included in %s", k, v))
+		}
+	}
+	return found, missing, nil
+}
+
+func parseMaster(fs afero.Fs, file string) map[string]string {
+
+	paths := make(map[string]string)
 	attributes := make(map[string]string)
 
 	content, err := afero.ReadFile(fs, file)
@@ -84,27 +105,25 @@ func parseMaster(fs afero.Fs, file string) []string {
 		if len(line) >= 7 && line[:7] == "include" {
 			res := strings.Split(line, "::")
 			path := strings.Split(res[1], "[")
-			p := strings.TrimSpace(path[0])
-			paths = append(paths, p)
+			child := strings.TrimSpace(path[0])
+			paths[child] = file
 		}
 	}
-	paths = append(paths, strings.TrimSpace(attributes["bibliography-database"]))
-
+	paths[strings.TrimSpace(attributes["bibliography-database"])] = "."
 	return paths
 
 }
 
-func parseChild(fs afero.Fs, file string) []string {
+func parseChild(fs afero.Fs, file string) map[string]string {
 	extension := filepath.Ext(file)
 	parentPath := file[0 : len(file)-len(extension)]
-	paths := []string{}
+	paths := make(map[string]string)
 
 	exists, err := afero.Exists(fs, file)
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
-
 	if exists {
 		content, err := afero.ReadFile(fs, file)
 		if err != nil {
@@ -116,20 +135,22 @@ func parseChild(fs afero.Fs, file string) []string {
 		for scanner.Scan() {
 			line := scanner.Text()
 			if len(line) >= 9 && line[:9] == "include::" {
-
 				includeParts := strings.Split(line, "::")
 				includePath := strings.Split(includeParts[1], "[")[0]
-				paths = append(paths, filepath.Join(parentPath, includePath))
+				paths[filepath.Join(parentPath, includePath)] = parentPath
 			}
 		}
 		// recurse paths
-		childPaths := []string{}
+		childPaths := make(map[string]string)
 		for _, p := range paths {
-			childPaths = append(childPaths, parseChild(fs, p)...)
+			innerPaths := parseChild(fs, p)
+			for k, v := range innerPaths {
+				paths[k] = v
+			}
 		}
-		paths = append(paths, childPaths...)
-
+		for k, v := range childPaths {
+			paths[k] = v
+		}
 	}
-
 	return paths
 }

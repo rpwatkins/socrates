@@ -1,0 +1,28 @@
+:doctitle:
+:subtitle:
+:description: 
+:keywords:
+:author: 
+:authorinitials: 
+:revnumber: 0.1.0
+:email: 
+:copyright: 
+:revdate: {docdate}
+:doctype: book
+:toc: left
+:toclevels: 3
+:stem:
+:experimental:
+:lang: en
+:secnums:
+:icons: font
+:icon-set: fi
+:mermaid: mmdc
+:source-highlighter: rouge
+:rouge-linenums-mode: inline
+:bibliography-database: references.bib
+:bibliography-style: chicago-author-date
+:imagesdir: images
+:imagesoutdir: images
+
+= {doctitle} : {subtitle}

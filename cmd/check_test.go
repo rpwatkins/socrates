@@ -17,16 +17,27 @@ func TestCheck(t *testing.T) {
 	// initial a project
 	initProject(fs)
 
-	c1 := "include::includes/include1.adoc"
-	// create some nested include files
-	if err := afero.WriteFile(fs, filepath.Join("parts", "part_01", "chapters", "chapter_02.adoc"), []byte(c1), 0644); err != nil {
+	inc := "include::includes/include1.adoc"
+	// open chapter_01.adoc and add include
+	file, err := afero.ReadFile(fs, filepath.Join("parts", "part_01", "chapters", "chapter_01.adoc"))
+	if err != nil {
 		fmt.Print(err)
 	}
+	contents := string(file)
+	newContents := fmt.Sprintf("%s\n\n%s", contents, inc)
+
 	// ctreate included file
-	if err := afero.WriteFile(fs, filepath.Join("parts", "part_01", "chapters", "includes", "include1.adoc"), []byte(""), 0644); err != nil {
+	if err := afero.WriteFile(fs, filepath.Join("parts", "part_01", "chapters", "includes", "include1.adoc"), []byte(newContents), 0644); err != nil {
 		fmt.Print(err)
 	}
-	missing, err := check(fs)
+	found, missing, err := validate(fs)
+	for _, m := range found {
+		fmt.Printf("%s\n", m)
+	}
+	for _, m := range missing {
+		fmt.Printf("%s\n", m)
+	}
+	fmt.Printf("missing count = %d", len(missing))
 	assert.NoError(err)
 	assert.True(len(missing) == 0)
 }

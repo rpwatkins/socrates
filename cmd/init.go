@@ -14,6 +14,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+var bare bool
+
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "init creates a new manuscript.",
@@ -25,27 +27,13 @@ var initCmd = &cobra.Command{
 	},
 }
 
-var refreshCmd = &cobra.Command{
-	Use:   "refresh",
-	Short: "<refresh> adds missing items to an existing manuscript.",
-	Long:  `The <refresh> command searches for missing items and adds them to an existing manuscript. Existing files are not over-written.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		if err := writeFS(afero.NewOsFs()); err != nil {
-			log.Error(err)
-			os.Exit(1)
-		}
-	},
-}
-
 func init() {
 	rootCmd.AddCommand(initCmd)
-	rootCmd.AddCommand(refreshCmd)
-
+	initCmd.Flags().BoolVarP(&bare, "bare", "b", false, "create a bare project.")
 }
 
 func initProject(fs afero.Fs) {
 
-	// confirm current working directory is empty
 	empty, err := afero.IsEmpty(fs, ".")
 	if err != nil {
 		log.Error(err.Error())
@@ -56,13 +44,36 @@ func initProject(fs afero.Fs) {
 		os.Exit(1)
 	}
 
-	// write folders and files
-	if err := writeFS(fs); err != nil {
-		log.Error(err)
-		log.Error("initilization failed.")
-		os.Exit(1)
+	// confirm current working directory is empty
+	if !bare {
+		if err := writeFS(fs); err != nil {
+			log.Error(err)
+			log.Error("initilization failed.")
+			os.Exit(1)
+		}
+	} else {
+		if err := writeBare(fs); err != nil {
+			log.Error(err)
+			log.Error("initilization failed.")
+			os.Exit(1)
+		}
 	}
 	log.Info("Socrates project created.")
+}
+
+func writeBare(fs afero.Fs) error {
+	box := packr.New("assets", "./templates")
+	file, err := box.Find("master-bare.adoc")
+	if err != nil {
+		return err
+	}
+	// copy file to destination
+	if err := afero.WriteFile(fs, "master.adoc", file, 0644); err != nil {
+		return err
+	}
+	log.Info("master.adoc file created.")
+	return nil
+
 }
 
 func InitPaths() []string {

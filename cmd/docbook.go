@@ -27,16 +27,13 @@ func init() {
 
 func buildDocbook(fs afero.Fs) {
 
-	missing, err := check(fs)
-	if err != nil {
-		log.Error(err)
-		os.Exit(1)
-	}
+	missing := missingIncludes(fs)
 	if len(missing) > 0 {
-		log.Error("build failed. The following included file(s) could not be found.")
 		for _, m := range missing {
-			log.Warning(m)
+			log.Error(m)
+
 		}
+		log.Errorf("build failed due to invalid include directive(s).")
 		os.Exit(1)
 	}
 	// buildPDF creates a manuscript from a master.adoc file in the current directory
