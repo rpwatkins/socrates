@@ -21,9 +21,7 @@ var initCmd = &cobra.Command{
 	Short: "init creates a new manuscript.",
 	Long:  `The init command creates a new manuscript.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// default file system
-		var fs = afero.NewOsFs()
-		initProject(fs)
+		initProject(afero.NewOsFs())
 	},
 }
 
@@ -61,6 +59,7 @@ func initProject(fs afero.Fs) {
 	log.Info("Socrates project created.")
 }
 
+// bare socrates project 
 func writeBare(fs afero.Fs) error {
 	box := packr.New("assets", "./templates")
 	file, err := box.Find("master-bare.adoc")
@@ -71,11 +70,23 @@ func writeBare(fs afero.Fs) error {
 	if err := afero.WriteFile(fs, "master.adoc", file, 0644); err != nil {
 		return err
 	}
-	log.Info("master.adoc file created.")
+	file2, err := box.Find("references.bib")
+	if err != nil {
+		return err
+	}
+	// copy file to destination
+	if err := afero.WriteFile(fs, "references.bib", file2, 0644); err != nil {
+		return err
+	}
+	if Verbose {
+		log.Info("master.adoc created.")
+		log.Infof("references.bib created.")
+	}
 	return nil
 
 }
 
+// default init below
 func InitPaths() []string {
 	return []string{
 		"front_matter",
@@ -91,15 +102,17 @@ func InitPaths() []string {
 }
 
 func InitFileMap() map[string]string {
+	b := "back_matter"
+	f := "front_matter"
 	m := make(map[string]string)
-	m["appendix.adoc.plush"] = "back_matter"
-	m["bibliography.adoc"] = "back_matter"
-	m["colophon.adoc"] = "back_matter"
-	m["glossary.adoc"] = "back_matter"
-	m["index.adoc"] = "back_matter"
-	m["preface.adoc"] = "front_matter"
-	m["dedication.adoc"] = "front_matter"
-	m["abstract.adoc"] = "front_matter"
+	m["appendix.adoc.plush"] = b
+	m["bibliography.adoc"] = b
+	m["colophon.adoc"] = b
+	m["glossary.adoc"] = b
+	m["index.adoc"] = b
+	m["preface.adoc"] = f
+	m["dedication.adoc"] = f
+	m["abstract.adoc"] = f
 	m["master.adoc"] = "."
 	m["references.bib"] = "."
 	m["chapter.adoc.plush"] = filepath.Join("parts", "part_01", "chapters")
@@ -122,7 +135,9 @@ func writeFS(fs afero.Fs) error {
 			if err := fs.Mkdir(v, 0755); err != nil {
 				return err
 			}
-			log.Infof("%s folder created", v)
+			if Verbose {
+				log.Infof("%s folder created.", v)
+			}
 		}
 	}
 
@@ -170,13 +185,17 @@ func writeFS(fs afero.Fs) error {
 				if err := afero.WriteReader(fs, filepath.Join(v, name), bytes.NewReader(s2)); err != nil {
 					return err
 				}
-				log.Infof("%s file created.", filepath.Join(v, name))
+				if Verbose {
+					log.Infof("%s created.", filepath.Join(v, name))
+				}
 			} else {
 				// copy file to destination
 				if err := afero.WriteReader(fs, filepath.Join(v, k), bytes.NewReader(file)); err != nil {
 					return err
 				}
-				log.Infof("%s file created.", filepath.Join(v, k))
+				if Verbose {
+					log.Infof("%s created.", filepath.Join(v, k))
+				}
 
 			}
 

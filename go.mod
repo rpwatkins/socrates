@@ -3,6 +3,7 @@ module github.com/rpwatkins/socrates
 go 1.12
 
 require (
+	github.com/fatih/color v1.7.0
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/gobuffalo/helpers v0.2.4 // indirect
 	github.com/gobuffalo/logger v1.0.1 // indirect
@@ -12,6 +13,7 @@ require (
 	github.com/gobuffalo/validate v2.0.3+incompatible // indirect
 	github.com/gofrs/uuid v3.2.0+incompatible // indirect
 	github.com/golang/protobuf v1.3.2 // indirect
+	github.com/mattn/go-colorable v0.1.2 // indirect
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect
 	github.com/serenize/snaker v0.0.0-20171204205717-a683aaf2d516 // indirect

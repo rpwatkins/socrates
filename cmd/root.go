@@ -9,6 +9,8 @@ import (
 
 const AD = "asciidoctor"
 
+var Verbose bool
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "socrates [command]",
@@ -29,6 +31,7 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
+	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
 }
 
 func initConfig() {

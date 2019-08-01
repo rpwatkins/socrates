@@ -26,32 +26,43 @@ func init() {
 	rootCmd.AddCommand(checkCmd)
 }
 
-func check(fs afero.Fs) {
-	found, missing, err := validate(afero.NewOsFs())
-	if err != nil {
-		log.Error(err)
-		os.Exit(1)
-	}
-	for _, m := range found {
-		log.Info(m)
-	}
-	for _, m := range missing {
-		log.Warning(m)
-	}
-	if len(missing) == 0 {
-		log.Info("all included file found.")
-	} else {
-		log.Warning("some included files are missing.")
-	}
-}
+// helper functionm used before builds begin
+func runValidation(fs afero.Fs) {
 
-func missingIncludes(fs afero.Fs) []string {
 	_, missing, err := validate(fs)
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
-	return missing
+	if len(missing) > 0 {
+		for _, m := range missing {
+			log.Error(m)
+		}
+		log.Errorf("build failed due to invalid include directive(s).")
+		os.Exit(1)
+	}
+}
+
+// checks to make sure all included files can be found.
+func check(fs afero.Fs) {
+	found, missing, err := validate(fs)
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+	if Verbose {
+		for _, m := range found {
+			log.Info(m)
+		}
+	}
+	for _, m := range missing {
+		log.Warning(m)
+	}
+	if len(missing) == 0 {
+		log.Infof("all %d included files found.", len(found))
+	} else {
+		log.Warningf("%d included files missing.", len(missing))
+	}
 }
 
 func validate(fs afero.Fs) ([]string, []string, error) {
@@ -74,9 +85,9 @@ func validate(fs afero.Fs) ([]string, []string, error) {
 			return nil, nil, err
 		}
 		if !exists {
-			missing = append(missing, fmt.Sprintf("%s is missing. Correct the include directive in %s.", k, v))
+			missing = append(missing, fmt.Sprintf("%s missing. Correct the include directive in %s.", k, v))
 		} else {
-			found = append(found, fmt.Sprintf("%s found. Included in %s", k, v))
+			found = append(found, fmt.Sprintf("%s found.", k))
 		}
 	}
 	return found, missing, nil

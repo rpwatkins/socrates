@@ -39,7 +39,7 @@ func clean(fs afero.Fs) {
 		log.Error("build folder could not be cleaned")
 		os.Exit(1)
 	}
-
+	log.Info("build folder cleaned.")
 }
 
 func removeContents(fs afero.Fs, dir string) error {
@@ -52,6 +52,9 @@ func removeContents(fs afero.Fs, dir string) error {
 		err = os.RemoveAll(filepath.Join(dir, n))
 		if err != nil {
 			return err
+		}
+		if Verbose {
+			log.Infof("%s cleaned", filepath.Join(dir, n))
 		}
 	}
 	return nil

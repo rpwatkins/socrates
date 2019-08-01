@@ -20,16 +20,16 @@ func CopyFolder(src string, dst string, fs afero.Fs) error {
 			return err
 		}
 	}
-	// create images folder
+	// create images folder in dst
 	if err := fs.MkdirAll(dst, 0755); err != nil {
 		return err
 	}
-
+	// read the images folder
 	entries, err := afero.ReadDir(fs, src)
 	if err != nil {
 		return err
 	}
-
+	// copy each entry recursively
 	for _, entry := range entries {
 		srcPath := filepath.Join(src, entry.Name())
 		dstPath := filepath.Join(dst, entry.Name())
