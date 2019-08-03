@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"path"
@@ -27,8 +26,12 @@ func init() {
 
 func buildFopub(fs afero.Fs) {
 
-	// include checl
-	runValidation(fs)
+	// include check
+	missing := runValidation(fs)
+	if len(missing) > 0 {
+		log.Error("build failed.")
+		os.Exit(1)
+	}
 
 	// buildPDF creates a manuscript from a master.adoc file in the current directory
 	// destination is the build folder under the cwd
@@ -72,7 +75,7 @@ func buildFopub(fs afero.Fs) {
 	}
 	cmd2 := exec.Command(command2, args2...)
 	if err := cmd2.Run(); err != nil {
-		fmt.Print(err)
+		log.Error(err)
 		log.WithFields(log.Fields{
 			"source": source,
 		}).Errorf("%s fopub pdf could not be built", source)

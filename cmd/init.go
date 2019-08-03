@@ -59,7 +59,7 @@ func initProject(fs afero.Fs) {
 	log.Info("Socrates project created.")
 }
 
-// bare socrates project 
+// bare socrates project
 func writeBare(fs afero.Fs) error {
 	box := packr.New("assets", "./templates")
 	file, err := box.Find("master-bare.adoc")
@@ -98,6 +98,7 @@ func InitPaths() []string {
 		"parts",
 		filepath.Join("parts", "part_01"),
 		filepath.Join("parts", "part_01", "chapters"),
+		filepath.Join("parts", "part_01", "chapters", "chapter_01"),
 	}
 }
 
@@ -116,6 +117,8 @@ func InitFileMap() map[string]string {
 	m["master.adoc"] = "."
 	m["references.bib"] = "."
 	m["chapter.adoc.plush"] = filepath.Join("parts", "part_01", "chapters")
+	m["include_01.adoc"] = filepath.Join("parts", "part_01", "chapters", "chapter_01")
+	m["include_02.adoc"] = filepath.Join("parts", "part_01", "chapters", "chapter_01")
 	m["default-theme.yml"] = filepath.Join("resources", "pdfstyles")
 	m["part.adoc.plush"] = filepath.Join("parts", "part_01")
 	return m

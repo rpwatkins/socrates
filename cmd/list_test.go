@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCheck(t *testing.T) {
+func TestList(t *testing.T) {
 
 	assert := assert.New(t)
 	// use in memory file system
@@ -30,10 +30,8 @@ func TestCheck(t *testing.T) {
 	if err := afero.WriteFile(fs, filepath.Join("parts", "part_01", "chapters", "includes", "include1.adoc"), []byte(newContents), 0644); err != nil {
 		fmt.Print(err)
 	}
-	found, missing, err := validate(fs)
-	for _, m := range found {
-		fmt.Printf("%s\n", m)
-	}
+
+	missing := runValidation(fs)
 	for _, m := range missing {
 		fmt.Printf("%s\n", m)
 	}

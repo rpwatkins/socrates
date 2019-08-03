@@ -27,8 +27,12 @@ func init() {
 
 func buildDocbook(fs afero.Fs) {
 
-	// include checl
-	runValidation(fs)
+	// include check
+	missing := runValidation(fs)
+	if len(missing) > 0 {
+		log.Error("build failed.")
+		os.Exit(1)
+	}
 	// buildPDF creates a manuscript from a master.adoc file in the current directory
 	// destination is the build folder under the cwd
 	cwd, err := os.Getwd()

@@ -1,2 +1,6 @@
 = <%= title %>
 
+include::chapter_01/include_01.adoc[]
+include::chapter_01/include_02.adoc[]
+
+

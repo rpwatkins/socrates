@@ -16,12 +16,12 @@
 :lang: en
 :secnums:
 :icons: font
-:icon-set: fi
+:icon-set: far
 :mermaid: mmdc
 :source-highlighter: rouge
 :rouge-linenums-mode: inline
 :bibliography-database: references.bib
-:bibliography-style: chicago-author-date
+:bibliography-style: modern-language-association
 :imagesdir: images
 :imagesoutdir: images
 

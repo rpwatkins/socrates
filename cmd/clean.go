@@ -54,7 +54,7 @@ func removeContents(fs afero.Fs, dir string) error {
 			return err
 		}
 		if Verbose {
-			log.Infof("%s cleaned", filepath.Join(dir, n))
+			log.Infof("%s removed", filepath.Join(dir, n))
 		}
 	}
 	return nil
