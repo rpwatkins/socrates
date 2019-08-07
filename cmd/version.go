@@ -7,8 +7,8 @@ import (
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "<version> displays the current version of Socrates.",
-	Long:  `The <version> command displays the current Socrates version..`,
+	Short: "version displays the current version of Socrates.",
+	Long:  `The version command displays the current Socrates version.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		version()
 	},
@@ -20,5 +20,5 @@ func init() {
 
 func version() {
 
-	log.Infof("Socrates v0.5.0")
+	log.Infof("Socrates v0.6.0")
 }

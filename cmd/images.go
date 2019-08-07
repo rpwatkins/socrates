@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 )
 
@@ -53,7 +54,9 @@ func CopyFolder(src string, dst string, fs afero.Fs) error {
 			if err := afero.WriteFile(fs, dstPath, file, 0644); err != nil {
 				return err
 			}
-
+			if Verbose {
+				log.Infof("%s copied.", dstPath)
+			}
 		}
 	}
 

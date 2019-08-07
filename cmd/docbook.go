@@ -63,7 +63,6 @@ func buildDocbook(fs afero.Fs) {
 		}).Errorf("%s docbook could not be built", source)
 		os.Exit(1)
 	}
-
 	if err := CopyFolder(filepath.Join("images"), filepath.Join("build", "docbook", "images"), fs); err != nil {
 		log.Error(err)
 		os.Exit(1)

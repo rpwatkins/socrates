@@ -25,6 +25,7 @@ func TestInit(t *testing.T) {
 	files := []string{
 		filepath.Join("master.adoc"),
 		filepath.Join("references.bib"),
+		filepath.Join("socrates.toml"),
 		filepath.Join("front_matter", "abstract.adoc"),
 		filepath.Join("front_matter", "dedication.adoc"),
 		filepath.Join("front_matter", "preface.adoc"),
@@ -33,7 +34,7 @@ func TestInit(t *testing.T) {
 		filepath.Join("back_matter", "colophon.adoc"),
 		filepath.Join("back_matter", "glossary.adoc"),
 		filepath.Join("back_matter", "index.adoc"),
-		filepath.Join("parts", "part_01", "chapters", "chapter_01.adoc"),
+		filepath.Join("parts", "part_01", "chapters", "chapter_01", "chapter_01.adoc"),
 		filepath.Join("resources", "pdfstyles", "default-theme.yml"),
 		filepath.Join("parts", "part_01", "part_01.adoc"),
 	}

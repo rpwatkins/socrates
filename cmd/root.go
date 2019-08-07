@@ -5,6 +5,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 const AD = "asciidoctor"
@@ -36,27 +37,25 @@ func init() {
 
 func initConfig() {
 
-	// // get the current working directory
-	// cwd, err := os.Getwd()
-	// CheckErr(err)
+	// get the current working directory
+	cwd, err := os.Getwd()
+	if err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
 
-	// // get project name based on folder name
-	// projectName := path.Base(cwd)
+	// Search config in project directory with name reid (without extension).
+	viper.AddConfigPath(cwd)
+	viper.SetConfigType("toml")
+	viper.SetConfigName("socrates")
 
-	// // Search config in project directory with name reid (without extension).
-	// viper.AddConfigPath(cwd)
-	// viper.SetConfigType("toml")
-	// viper.SetConfigName("reid")
+	// get environment variables
+	viper.AutomaticEnv()
 
-	// // get environment variables
-	// viper.AutomaticEnv()
+	// If a config file is found, read it in.
+	if err := viper.ReadInConfig(); err != nil {
+		log.Error("No config file found.")
+		os.Exit(1)
+	}
 
-	// // If a config file is found, read it in.
-	// if err := viper.ReadInConfig(); err == nil {
-	// 	Info("Using config file: " + viper.ConfigFileUsed())
-	// 	viper.SetDefault("site", "../site")
-	// 	viper.SetDefault("project", projectName)
-	// } else {
-	// 	Info("No config file found.")
-	// }
 }

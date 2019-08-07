@@ -9,6 +9,7 @@
 :copyright: 
 :revdate: {docdate}
 :doctype: book
+:data-uri:
 :toc: left
 :toclevels: 3
 :stem:
@@ -30,7 +31,7 @@
 include::front_matter/dedication.adoc[]
 include::front_matter/preface.adoc[]
 include::parts/part_01/part_01.adoc[]
-include::parts/part_01/chapters/chapter_01.adoc[leveloffset=+1]
+include::parts/part_01/chapters/chapter_01/chapter_01.adoc[leveloffset=+1]
 include::back_matter/appendix_01.adoc[]
 include::back_matter/glossary.adoc[]
 include::back_matter/bibliography.adoc[]

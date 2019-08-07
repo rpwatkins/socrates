@@ -31,7 +31,7 @@ func clean(fs afero.Fs) {
 		os.Exit(1)
 	}
 	if !exists {
-		log.Warning("no build folder exists.")
+		log.Warning("build folder does not exist.")
 		os.Exit(1)
 	}
 	if err := removeContents(fs, "build"); err != nil {

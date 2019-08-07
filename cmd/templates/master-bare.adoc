@@ -9,6 +9,7 @@
 :copyright: 
 :revdate: {docdate}
 :doctype: book
+:data-uri:
 :toc: left
 :toclevels: 3
 :stem:

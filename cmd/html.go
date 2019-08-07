@@ -61,7 +61,6 @@ func buildHTML(fs afero.Fs) {
 		log.Errorf("%s HTML page could not be built", source)
 		os.Exit(1)
 	}
-
 	if err := CopyFolder(filepath.Join("images"), filepath.Join("build", "html", "images"), fs); err != nil {
 		log.Error(err)
 		os.Exit(1)
