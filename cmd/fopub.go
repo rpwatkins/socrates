@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bytes"
 	"os"
 	"os/exec"
 	"path"
@@ -56,16 +57,16 @@ func buildFopub(fs afero.Fs) {
 		"--destination-dir=" + dest,
 	}
 	cmd := exec.Command(command, args...)
-	if err := cmd.Run(); err != nil {
-		log.Error(err)
-		log.WithFields(log.Fields{
-			"source": source,
-		}).Errorf("%s docbook file could not be built", source)
-		os.Exit(1)
-	}
+	var outb, errb bytes.Buffer
+	cmd.Stdout = &outb
+	cmd.Stderr = &errb
+	err2 := cmd.Run()
+	if err != nil {
+		log.Error(err2)
+		log.Error(outb.String())
+		log.Error(outb.String())
 
-	if err := CopyFolder(filepath.Join("images"), filepath.Join("build", "docbook", "images"), fs); err != nil {
-		log.Error(err)
+		log.Errorf("%s PDF could not be built", source)
 		os.Exit(1)
 	}
 
@@ -74,11 +75,16 @@ func buildFopub(fs afero.Fs) {
 		"build/fopub/" + out + ".xml",
 	}
 	cmd2 := exec.Command(command2, args2...)
-	if err := cmd2.Run(); err != nil {
-		log.Error(err)
-		log.WithFields(log.Fields{
-			"source": source,
-		}).Errorf("%s fopub pdf could not be built", source)
+	var out2b, err2b bytes.Buffer
+	cmd2.Stdout = &out2b
+	cmd2.Stderr = &err2b
+	err3 := cmd.Run()
+	if err != nil {
+		log.Error(err3)
+		log.Error(out2b.String())
+		log.Error(out2b.String())
+
+		log.Errorf("%s PDF could not be built", source)
 		os.Exit(1)
 	}
 	log.Infof("%s.pdf build succeeded.", out)

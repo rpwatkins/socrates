@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bytes"
 	"os"
 	"os/exec"
 	"path"
@@ -59,11 +60,16 @@ func buildPDF(fs afero.Fs) {
 		"--destination-dir=" + dest,
 	}
 	cmd := exec.Command(command, args...)
-	if err := cmd.Run(); err != nil {
-		log.Error(err)
-		log.WithFields(log.Fields{
-			"source": source,
-		}).Errorf("%s PDF could not be built", source)
+	var outb, errb bytes.Buffer
+	cmd.Stdout = &outb
+	cmd.Stderr = &errb
+	err2 := cmd.Run()
+	if err != nil {
+		log.Error(err2)
+		log.Error(outb.String())
+		log.Error(errb.String())
+
+		log.Errorf("%s PDF could not be built", source)
 		os.Exit(1)
 	}
 	log.Infof("%s.pdf build succeeded.", out)

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bytes"
 	"os"
 	"os/exec"
 	"path"
@@ -57,16 +58,18 @@ func buildDocbook(fs afero.Fs) {
 		"--destination-dir=" + dest,
 	}
 	cmd := exec.Command(command, args...)
-	if err := cmd.Run(); err != nil {
-		log.WithFields(log.Fields{
-			"source": source,
-		}).Errorf("%s docbook could not be built", source)
+	var outb, errb bytes.Buffer
+	cmd.Stdout = &outb
+	cmd.Stderr = &errb
+	err2 := cmd.Run()
+	if err != nil {
+		log.Error(err2)
+		log.Error(outb.String())
+		log.Error(errb.String())
+
+		log.Errorf("%s DocBook could not be built", source)
 		os.Exit(1)
 	}
-	if err := CopyFolder(filepath.Join("images"), filepath.Join("build", "docbook", "images"), fs); err != nil {
-		log.Error(err)
-		os.Exit(1)
-	}
-	log.Infof("%s.xml build succeeded.", out)
+	log.Infof("%s DocBook build succeeded.", out)
 
 }

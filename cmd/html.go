@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bytes"
 	"os"
 	"os/exec"
 	"path"
@@ -56,13 +57,16 @@ func buildHTML(fs afero.Fs) {
 		"--destination-dir=" + dest,
 	}
 	cmd := exec.Command(command, args...)
-	if err := cmd.Run(); err != nil {
-		log.Error(err)
-		log.Errorf("%s HTML page could not be built", source)
-		os.Exit(1)
-	}
-	if err := CopyFolder(filepath.Join("images"), filepath.Join("build", "html", "images"), fs); err != nil {
-		log.Error(err)
+	var outb, errb bytes.Buffer
+	cmd.Stdout = &outb
+	cmd.Stderr = &errb
+	err2 := cmd.Run()
+	if err != nil {
+		log.Error(err2)
+		log.Error(outb.String())
+		log.Error(errb.String())
+
+		log.Errorf("%s HTML could not be built", source)
 		os.Exit(1)
 	}
 

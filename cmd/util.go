@@ -13,7 +13,7 @@ import (
 func runValidation(fs afero.Fs) []string {
 
 	missing := []string{}
-	incs := listMaster(fs, "master.adoc")
+	incs := checkMaster(fs, "master.adoc")
 	for _, i := range incs {
 		if !i.Found {
 			missing = append(missing, i.Path)

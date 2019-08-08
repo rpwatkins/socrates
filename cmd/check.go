@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/fatih/color"
@@ -41,17 +42,56 @@ type include struct {
 
 func check(fs afero.Fs) {
 
-	incs := listMaster(fs, "master.adoc")
+	incs := checkMaster(fs, "master.adoc")
+	f, m := flattenAndSortByMissingIncludes(incs)
+	// prepare summary
+	missingCount := len(m)
+	includeCount := 0
+	attributeCount := 0
+	imageCount := 0
+	urlCount := 0
+	diagramCount := 0
+	for _, i := range f {
+		switch i.Kind {
+		case "include":
+			includeCount += 1
+		case "attribute":
+			attributeCount += 1
+		case "image":
+			imageCount += 1
+		case "url":
+			urlCount += 1
+		case "diagram":
+			diagramCount += 1
+		}
+	}
+
+	// show tree
+	red := color.New(color.FgRed).SprintFunc()         // missing
+	blue := color.New(color.FgBlue).SprintFunc()       // includes
+	yellow := color.New(color.FgYellow).SprintFunc()   // attributes
+	cyan := color.New(color.FgCyan).SprintFunc()       // images
+	magenta := color.New(color.FgMagenta).SprintFunc() // urls
+	green := color.New(color.FgHiGreen).SprintFunc()   // diagrams
+
+	fmt.Print("\nSUMMARY:   ")
+	fmt.Print(red(fmt.Sprintf("%d missing   ", missingCount)))
+	fmt.Print(blue(fmt.Sprintf("%d include   ", includeCount)))
+	fmt.Print(yellow(fmt.Sprintf("%d attribute   ", attributeCount)))
+	fmt.Print(cyan(fmt.Sprintf("%d image   ", imageCount)))
+	fmt.Print(magenta(fmt.Sprintf("%d url   ", urlCount)))
+	fmt.Print(green(fmt.Sprintf("%d diagram\n", diagramCount)))
+
 	// prepare tree display
 	root := textree.NewNode("master.adoc")
 	// get all child nodes
-	displayIncludes(incs, root)
-	// show tree
+	display(incs, root)
 	o := textree.NewRenderOptions()
 	root.Render(os.Stdout, o)
+
 }
 
-func displayIncludes(includes []include, parent *textree.Node) {
+func display(includes []include, parent *textree.Node) {
 	red := color.New(color.FgRed).SprintFunc()         // missing
 	blue := color.New(color.FgBlue).SprintFunc()       // includes
 	yellow := color.New(color.FgYellow).SprintFunc()   // attributes
@@ -83,20 +123,21 @@ func displayIncludes(includes []include, parent *textree.Node) {
 			}
 		}
 		newNode := textree.NewNode(name)
-		displayIncludes(inc.Includes, newNode)
+		display(inc.Includes, newNode)
 		parent.Append(newNode)
 	}
+
 }
 
-func listMaster(fs afero.Fs, file string) []include {
+func checkMaster(fs afero.Fs, file string) []include {
 
-	// open master.adoc
-	content, err := afero.ReadFile(fs, file)
+	imagePath, err := getImagePath(fs, "master.adoc")
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
-	imagePath, err := getImagePath(fs, "master.adoc")
+	// open master.adoc
+	content, err := afero.ReadFile(fs, file)
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)
@@ -130,7 +171,7 @@ func listMaster(fs afero.Fs, file string) []include {
 				inc.Found = exists
 				inc.LineNum = lineNum
 				// get child includes
-				inc.Includes = listChild(fs, inc.Path, imagePath)
+				inc.Includes = checkChild(fs, inc.Path, imagePath)
 				incs = append(incs, inc)
 			}
 		}
@@ -182,7 +223,7 @@ func listMaster(fs afero.Fs, file string) []include {
 	return incs
 }
 
-func listChild(fs afero.Fs, file string, imagePath string) []include {
+func checkChild(fs afero.Fs, file string, imagePath string) []include {
 	// get parent path from file
 	n := filepath.Base(file)
 	parentPath := strings.Replace(file, n, "", 1)
@@ -210,17 +251,21 @@ func listChild(fs afero.Fs, file string, imagePath string) []include {
 			line := scanner.Text()
 
 			if strings.HasPrefix(line, "include::") {
+
 				res := strings.Split(line, "::")
 				path := strings.TrimSpace(strings.Split(res[1], "[")[0])
 
-				inc := checkItem(fs, filepath.Join(parentPath, path))
-				inc.Kind = "include"
-				inc.LineNum = lineNum
-				// recurse
-				inc.Includes = listChild(fs, inc.Path, imagePath)
-				incs = append(incs, inc)
-
-			} else if strings.HasPrefix(line, "image::") {
+				if !includesContains(incs, path) {
+					inc := checkItem(fs, filepath.Join(parentPath, path))
+					inc.Kind = "include"
+					inc.LineNum = lineNum
+					// recurse
+					inc.Includes = checkChild(fs, inc.Path, imagePath)
+					incs = append(incs, inc)
+				}
+			}
+			// images
+			if strings.HasPrefix(line, "image::") {
 				parts := strings.Split(line, "::")
 				path := strings.Split(parts[1], "[")[0]
 				// check if exists
@@ -228,22 +273,8 @@ func listChild(fs afero.Fs, file string, imagePath string) []include {
 				inc.Kind = "image"
 				inc.LineNum = lineNum
 				incs = append(incs, inc)
-
-			} else {
-				// check URLs (finds bare urls and link: macros)
-				urls := xurls.Strict().FindAllString(line, -1)
-				for _, url := range urls {
-					if strings.Contains(url, "[") {
-						url = strings.Split(url, "[")[0]
-					}
-					inc := checkURL(url)
-					inc.Kind = "url"
-					inc.LineNum = lineNum
-					incs = append(incs, inc)
-				}
 			}
 
-			// diagrams
 			macros := []string{
 				"a2s::",
 				"actdiag::",
@@ -277,6 +308,31 @@ func listChild(fs afero.Fs, file string, imagePath string) []include {
 					inc.LineNum = lineNum
 					incs = append(incs, inc)
 				}
+			}
+
+			urls := xurls.Strict().FindAllString(line, -1)
+			for _, url := range urls {
+				if strings.Contains(url, "[") {
+					url = strings.Split(url, "[")[0]
+				}
+				inc := checkURL(url)
+				inc.Kind = "url"
+				inc.LineNum = lineNum
+				incs = append(incs, inc)
+			}
+
+			// inline images TODO:
+			regex := regexp.MustCompile(`image:[^:](.+?)\[`)
+			matches := regex.FindAll([]byte(line), -1)
+			for _, v := range matches {
+				p := string(v)
+				path := strings.Split(p, ":")[1]
+				path = strings.Split(path, "[")[0]
+
+				inc := checkItem(fs, filepath.Join(imagePath, path))
+				inc.Kind = "image"
+				inc.LineNum = lineNum
+				incs = append(incs, inc)
 			}
 			lineNum += 1
 		}

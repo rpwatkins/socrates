@@ -116,7 +116,7 @@ func InitFileMap() map[string]string {
 	m["abstract.adoc"] = f
 	m["master.adoc"] = "."
 	m["references.bib"] = "."
-	m["socrates.toml"] = "."
+	m["socrates.toml.plush"] = "."
 	m["chapter.adoc.plush"] = filepath.Join("parts", "part_01", "chapters", "chapter_01")
 	m["include_01.adoc"] = filepath.Join("parts", "part_01", "chapters", "chapter_01")
 	m["include_02.adoc"] = filepath.Join("parts", "part_01", "chapters", "chapter_01")
@@ -175,6 +175,9 @@ func writeFS(fs afero.Fs) error {
 				} else if k[0:4] == "part" {
 					title = "Part"
 					name = strings.Replace(oldName, "part", "part_01", 1)
+				} else if k == "socrates.toml.plush" {
+					title = "Socrates Project"
+					name = oldName
 				}
 
 				ctx := plush.NewContext()
@@ -200,9 +203,7 @@ func writeFS(fs afero.Fs) error {
 				if Verbose {
 					log.Infof("%s created.", filepath.Join(v, k))
 				}
-
 			}
-
 		}
 	}
 	return nil

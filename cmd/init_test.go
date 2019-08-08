@@ -49,5 +49,4 @@ func TestInit(t *testing.T) {
 		assert.True(exists)
 
 	}
-
 }
