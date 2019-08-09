@@ -42,7 +42,7 @@ type include struct {
 
 func check(fs afero.Fs) {
 
-	incs := checkMaster(fs, "master.adoc")
+	incs := checkMaster(fs, master)
 	f, m := flattenAndSortByMissingIncludes(incs)
 	// prepare summary
 	missingCount := len(m)
@@ -53,16 +53,16 @@ func check(fs afero.Fs) {
 	diagramCount := 0
 	for _, i := range f {
 		switch i.Kind {
-		case "include":
+		case includeS:
 			includeCount += 1
-		case "attribute":
+		case attribute:
 			attributeCount += 1
-		case "image":
+		case image:
 			imageCount += 1
-		case "url":
+		case diagram:
 			urlCount += 1
-		case "diagram":
-			diagramCount += 1
+		case url:
+			urlCount += 1
 		}
 	}
 
@@ -76,19 +76,27 @@ func check(fs afero.Fs) {
 
 	fmt.Print("\nSUMMARY:   ")
 	fmt.Print(red(fmt.Sprintf("%d missing   ", missingCount)))
-	fmt.Print(blue(fmt.Sprintf("%d include   ", includeCount)))
-	fmt.Print(yellow(fmt.Sprintf("%d attribute   ", attributeCount)))
-	fmt.Print(cyan(fmt.Sprintf("%d image   ", imageCount)))
-	fmt.Print(magenta(fmt.Sprintf("%d url   ", urlCount)))
-	fmt.Print(green(fmt.Sprintf("%d diagram\n", diagramCount)))
+	fmt.Print(blue(fmt.Sprintf("%d %s   ", includeCount, plural(includeCount, includeS))))
+	fmt.Print(yellow(fmt.Sprintf("%d %s   ", attributeCount, plural(attributeCount, attribute))))
+	fmt.Print(cyan(fmt.Sprintf("%d %s   ", imageCount, plural(imageCount, image))))
+	fmt.Print(magenta(fmt.Sprintf("%d %s   ", urlCount, plural(urlCount, url))))
+	fmt.Print(green(fmt.Sprintf("%d %s   \n", diagramCount, plural(diagramCount, diagram))))
 
 	// prepare tree display
-	root := textree.NewNode("master.adoc")
+	root := textree.NewNode(master)
 	// get all child nodes
 	display(incs, root)
 	o := textree.NewRenderOptions()
 	root.Render(os.Stdout, o)
 
+}
+
+func plural(num int, item string) string {
+	if num == 1 {
+		return item
+	} else {
+		return item + "s"
+	}
 }
 
 func display(includes []include, parent *textree.Node) {
@@ -103,22 +111,22 @@ func display(includes []include, parent *textree.Node) {
 		name := filepath.Base(inc.Path)
 
 		if !inc.Found {
-			if inc.Kind == "attribute" {
+			if inc.Kind == attribute {
 				name = red(fmt.Sprintf("%s (line %d: attribute file missing %s)", name, inc.LineNum, inc.Path))
 			} else {
 				name = red(fmt.Sprintf("%s (line %d: file missing %s)", name, inc.LineNum, inc.Path))
 			}
 		} else {
 			switch inc.Kind {
-			case "include":
+			case includeS:
 				name = blue(name)
-			case "image":
+			case image:
 				name = cyan(name)
-			case "url":
+			case url:
 				name = magenta(name)
-			case "diagram":
+			case diagram:
 				name = green(name)
-			case "attribute":
+			case attribute:
 				name = yellow(name)
 			}
 		}
@@ -131,7 +139,7 @@ func display(includes []include, parent *textree.Node) {
 
 func checkMaster(fs afero.Fs, file string) []include {
 
-	imagePath, err := getImagePath(fs, "master.adoc")
+	imagePath, err := getImagePath(fs, master)
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)
@@ -150,16 +158,16 @@ func checkMaster(fs afero.Fs, file string) []include {
 	lineNum := 1
 	for scanner.Scan() {
 		line := scanner.Text()
-		// check for includes
+		// check includes
 		if strings.HasPrefix(line, "include::") {
-			res := strings.Split(line, "::")
-			path := strings.Split(res[1], "[")
-			child := strings.TrimSpace(path[0])
-			if !includesContains(incs, child) {
+			res := strings.Split(line, "::")[1]
+			path := strings.Split(res, "[")[0]
+
+			if !includesContains(incs, path) {
 				inc := include{
-					Path:    child,
+					Path:    path,
 					Found:   false,
-					Kind:    "include",
+					Kind:    includeS,
 					LineNum: lineNum,
 				}
 				// check if exists
@@ -175,6 +183,7 @@ func checkMaster(fs afero.Fs, file string) []include {
 				incs = append(incs, inc)
 			}
 		}
+		// check attributes
 		if strings.HasPrefix(line, ":") {
 			parts := strings.Split(line, ":")
 			k := strings.TrimSpace(parts[1])
@@ -190,7 +199,7 @@ func checkMaster(fs afero.Fs, file string) []include {
 					Path:    strings.TrimSpace(v),
 					Found:   exists,
 					LineNum: lineNum,
-					Kind:    "attribute",
+					Kind:    attribute,
 				}
 				incs = append(incs, i)
 			}
@@ -212,12 +221,13 @@ func checkMaster(fs afero.Fs, file string) []include {
 						Path:    filepath.Join(imagePath, v),
 						Found:   exists,
 						LineNum: lineNum,
-						Kind:    "attribute",
+						Kind:    attribute,
 					}
 					incs = append(incs, i)
 				}
 			}
 		}
+		// next line
 		lineNum += 1
 	}
 	return incs
@@ -230,6 +240,7 @@ func checkChild(fs afero.Fs, file string, imagePath string) []include {
 
 	incs := []include{}
 
+	// check if exists
 	exists, err := afero.Exists(fs, file)
 	if err != nil {
 		log.Error(err)
@@ -252,12 +263,12 @@ func checkChild(fs afero.Fs, file string, imagePath string) []include {
 
 			if strings.HasPrefix(line, "include::") {
 
-				res := strings.Split(line, "::")
-				path := strings.TrimSpace(strings.Split(res[1], "[")[0])
+				res := strings.Split(line, "::")[1]
+				path := strings.Split(res, "[")[0]
 
 				if !includesContains(incs, path) {
 					inc := checkItem(fs, filepath.Join(parentPath, path))
-					inc.Kind = "include"
+					inc.Kind = includeS
 					inc.LineNum = lineNum
 					// recurse
 					inc.Includes = checkChild(fs, inc.Path, imagePath)
@@ -270,7 +281,7 @@ func checkChild(fs afero.Fs, file string, imagePath string) []include {
 				path := strings.Split(parts[1], "[")[0]
 				// check if exists
 				inc := checkItem(fs, filepath.Join(imagePath, path))
-				inc.Kind = "image"
+				inc.Kind = image
 				inc.LineNum = lineNum
 				incs = append(incs, inc)
 			}
@@ -304,7 +315,7 @@ func checkChild(fs afero.Fs, file string, imagePath string) []include {
 					parts := strings.Split(line, "::")
 					path := strings.Split(parts[1], "[")[0]
 					inc := checkItem(fs, path)
-					inc.Kind = "diagram"
+					inc.Kind = diagram
 					inc.LineNum = lineNum
 					incs = append(incs, inc)
 				}
@@ -316,7 +327,7 @@ func checkChild(fs afero.Fs, file string, imagePath string) []include {
 					url = strings.Split(url, "[")[0]
 				}
 				inc := checkURL(url)
-				inc.Kind = "url"
+				inc.Kind = url
 				inc.LineNum = lineNum
 				incs = append(incs, inc)
 			}
@@ -330,7 +341,7 @@ func checkChild(fs afero.Fs, file string, imagePath string) []include {
 				path = strings.Split(path, "[")[0]
 
 				inc := checkItem(fs, filepath.Join(imagePath, path))
-				inc.Kind = "image"
+				inc.Kind = image
 				inc.LineNum = lineNum
 				incs = append(incs, inc)
 			}

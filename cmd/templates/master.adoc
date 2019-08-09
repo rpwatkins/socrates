@@ -25,6 +25,8 @@
 :bibliography-style: modern-language-association
 :imagesdir: images
 :imagesoutdir: images
+:pdf-style: default
+:pdf-stylesdir: resources/pdfstyles
 
 = {doctitle} : {subtitle}
 

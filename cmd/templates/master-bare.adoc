@@ -25,5 +25,7 @@
 :bibliography-style: chicago-author-date
 :imagesdir: images
 :imagesoutdir: images
+:pdf-style: default
+
 
 = {doctitle} : {subtitle}

@@ -23,7 +23,7 @@ func TestInit(t *testing.T) {
 	}
 	// check files
 	files := []string{
-		filepath.Join("master.adoc"),
+		filepath.Join(master),
 		filepath.Join("references.bib"),
 		filepath.Join("socrates.toml"),
 		filepath.Join("front_matter", "abstract.adoc"),

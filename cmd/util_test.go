@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCheck_runValidation(t *testing.T) {
+func Test_runValidation(t *testing.T) {
 
 	// this tests the default init. The default as a total of twelve includes (with two in chapter_01.adoc)
 	assert := assert.New(t)
@@ -36,5 +36,33 @@ func TestCheck_runValidation(t *testing.T) {
 
 	m2 := runValidation(fs)
 	assert.Equal(9, len(m2))
+
+}
+
+func Test_getImagePath(t *testing.T) {
+	// this tests the default init. The default as a total of twelve includes (with two in chapter_01.adoc)
+	assert := assert.New(t)
+	// use in memory file system
+	fs := afero.NewMemMapFs()
+	// initial a project
+	initProject(fs)
+
+	ip, err := getImagePath(fs, master)
+	assert.NoError(err)
+	assert.Equal("images", ip)
+
+}
+
+func Test_getAttributes(t *testing.T) {
+	// this tests the default init. The default as a total of twelve includes (with two in chapter_01.adoc)
+	assert := assert.New(t)
+	// use in memory file system
+	fs := afero.NewMemMapFs()
+	// initial a project
+	initProject(fs)
+
+	atts, err := getAttributes(fs, "master.adoc")
+	assert.NoError(err)
+	assert.Equal(29, len(atts))
 
 }

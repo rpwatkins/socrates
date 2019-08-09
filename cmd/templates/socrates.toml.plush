@@ -1,8 +1,8 @@
 # This is a Socrates (github.com/rpwatkins/socrates) project configuratiom file.
 # see https://github.com/toml-lang/toml for more information on the TOML markup language
-project_name = "Name of Project"
 
-# output file name 
-output_file_name = "project-name" # do not include file extension (e.g., pdf, html)
+project = "<%= title %>"
+
+# output file name configuration 
+output = "<%= title %>"           # do not include file extension (e.g., pdf, html)
 add_build_timestamp = false       # add a time stamp to the end of the file name
-add_git_revision = false          # add the git revision number to the end of the file name

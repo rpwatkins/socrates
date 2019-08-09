@@ -2,14 +2,16 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var htmlCmd = &cobra.Command{
@@ -23,6 +25,18 @@ var htmlCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(htmlCmd)
+
+	htmlCmd.PersistentFlags().StringP("output", "o", "output File Name (no extension)", "The name to be used for the output of the build commands: docbook, html, fopub, pdf")
+	htmlCmd.PersistentFlags().Bool("timestamp", false, "Add the build timestamp to the output file name (default=false")
+
+	if err := viper.BindPFlag("output", htmlCmd.PersistentFlags().Lookup("output")); err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
+	if err := viper.BindPFlag("timestamp", htmlCmd.PersistentFlags().Lookup("timestamp")); err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
 }
 
 func buildHTML(fs afero.Fs) {
@@ -35,14 +49,12 @@ func buildHTML(fs afero.Fs) {
 	}
 	// buildPDF creates a manuscript from a master.adoc file in the current directory
 	// destination is the build folder under the cwd
-	cwd, err := os.Getwd()
-	if err != nil {
-		log.Error("could not get current directory")
-		os.Exit(1)
-	}
-	source := filepath.Join("master.adoc")
+	source := master
 	dest := filepath.Join("build", "html")
-	out := path.Base(cwd)
+	out := viper.Get("output").(string)
+	if viper.Get("timestamp").(bool) {
+		out = fmt.Sprintf("%s--%s", out, time.Now().Format("2006-01-02-15-04-05"))
+	}
 
 	command := AD
 	args := []string{
@@ -53,23 +65,20 @@ func buildHTML(fs afero.Fs) {
 		"--backend=html5",
 		"--quiet",
 		"-a max-width=55em",
-		"-a imagesoutdir=" + filepath.Join("build", "html", "images"),
 		"--destination-dir=" + dest,
 	}
 	cmd := exec.Command(command, args...)
 	var outb, errb bytes.Buffer
 	cmd.Stdout = &outb
 	cmd.Stderr = &errb
-	err2 := cmd.Run()
+	err := cmd.Run()
 	if err != nil {
-		log.Error(err2)
+		log.Error(err)
 		log.Error(outb.String())
 		log.Error(errb.String())
 
 		log.Errorf("%s HTML could not be built", source)
 		os.Exit(1)
 	}
-
 	log.Infof("%s.html build succeeded.", out)
-
 }

@@ -9,6 +9,12 @@ import (
 )
 
 const AD = "asciidoctor"
+const includeS = "include"
+const image = "image"
+const attribute = "attribute"
+const master = "master.adoc"
+const diagram = "diagram"
+const url = "url"
 
 var Verbose bool
 
@@ -44,6 +50,9 @@ func initConfig() {
 		os.Exit(1)
 	}
 
+	// defaults
+	viper.SetDefault("output", cwd)
+	viper.SetDefault("timestamp", false)
 	// Search config in project directory with name reid (without extension).
 	viper.AddConfigPath(cwd)
 	viper.SetConfigType("toml")
