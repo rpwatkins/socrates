@@ -181,7 +181,7 @@ func writeFS(fs afero.Fs) error {
 						log.Error(err)
 						os.Exit(1)
 					}
-					title = cwd
+					title = filepath.Base(cwd)
 					name = oldName
 				}
 
