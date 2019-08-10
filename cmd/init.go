@@ -67,7 +67,7 @@ func writeBare(fs afero.Fs) error {
 		return err
 	}
 	// copy file to destination
-	if err := afero.WriteFile(fs, "master.adoc", file, 0644); err != nil {
+	if err := afero.WriteFile(fs, master, file, 0644); err != nil {
 		return err
 	}
 	file2, err := box.Find("references.bib")
@@ -79,7 +79,7 @@ func writeBare(fs afero.Fs) error {
 		return err
 	}
 	if Verbose {
-		log.Info("master.adoc created.")
+		log.Infof("%s created.", master)
 		log.Infof("references.bib created.")
 	}
 	return nil
@@ -115,6 +115,7 @@ func InitFileMap() map[string]string {
 	m["dedication.adoc"] = f
 	m["abstract.adoc"] = f
 	m[master] = "."
+	m["placeholder.jpg"] = "images"
 	m["references.bib"] = "."
 	m["socrates.toml.plush"] = "."
 	m["chapter.adoc.plush"] = filepath.Join("parts", "part_01", "chapters", "chapter_01")

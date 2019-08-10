@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
@@ -50,13 +49,7 @@ func buildDocbook(fs afero.Fs) {
 	}
 	// buildPDF creates a manuscript from a master.adoc file in the current directory
 	// destination is the build folder under the cwd
-	cwd, err := os.Getwd()
-	if err != nil {
-		log.Error("could not get current directory")
-		os.Exit(1)
-	}
-	source := filepath.Join(cwd, master)
-	dest := filepath.Join(cwd, "build", "docbook")
+	dest := filepath.Join("build", "docbook")
 	out := viper.Get("output").(string)
 	if viper.Get("timestamp").(bool) {
 		out = fmt.Sprintf("%s--%s", out, time.Now().Format("2006-01-02-15-04-05"))
@@ -64,27 +57,23 @@ func buildDocbook(fs afero.Fs) {
 
 	command := AD
 	args := []string{
-		source,
+		master,
 		"--out-file=" + out + ".xml",
 		"--require=asciidoctor-diagram",
 		"--require=asciidoctor-bibliography",
 		"--backend=docbook5",
-		"--quiet",
 		"--destination-dir=" + dest,
 	}
-	cmd := exec.Command(command, args...)
-	var outb, errb bytes.Buffer
-	cmd.Stdout = &outb
-	cmd.Stderr = &errb
-	err2 := cmd.Run()
-	if err != nil {
-		log.Error(err2)
-		log.Error(outb.String())
-		log.Error(errb.String())
+	result, err := exec.Command(command, args...).CombinedOutput()
+	r := string(result)
 
-		log.Errorf("%s DocBook could not be built", source)
+	if r != "" {
+		fmt.Print(r)
+	}
+	if err != nil {
+		log.Error(err)
+		log.Errorf("%s DocBook could not be built", master)
 		os.Exit(1)
 	}
-	log.Infof("%s DocBook build succeeded.", out)
 
 }

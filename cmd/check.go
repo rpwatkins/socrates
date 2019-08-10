@@ -75,7 +75,7 @@ func check(fs afero.Fs) {
 	green := color.New(color.FgHiGreen).SprintFunc()   // diagrams
 
 	fmt.Print("\nSUMMARY:   ")
-	fmt.Print(red(fmt.Sprintf("%d missing   ", missingCount)))
+	fmt.Print(red(fmt.Sprintf("%d missing      ", missingCount)))
 	fmt.Print(blue(fmt.Sprintf("%d %s   ", includeCount, plural(includeCount, includeS))))
 	fmt.Print(yellow(fmt.Sprintf("%d %s   ", attributeCount, plural(attributeCount, attribute))))
 	fmt.Print(cyan(fmt.Sprintf("%d %s   ", imageCount, plural(imageCount, image))))
@@ -144,6 +144,7 @@ func checkMaster(fs afero.Fs, file string) []include {
 		log.Error(err)
 		os.Exit(1)
 	}
+
 	// open master.adoc
 	content, err := afero.ReadFile(fs, file)
 	if err != nil {

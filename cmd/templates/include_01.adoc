@@ -1,1 +1,3 @@
 Include 01
+
+image::placeholder.jpg[]

@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
@@ -50,7 +49,6 @@ func buildPDF(fs afero.Fs) {
 	// buildPDF creates a manuscript from a master.adoc file in the current directory
 	// destination is the build folder under the cwd
 
-	source := master
 	dest := filepath.Join("build", "pdf")
 	out := viper.Get("output").(string)
 	if viper.Get("timestamp").(bool) {
@@ -58,28 +56,24 @@ func buildPDF(fs afero.Fs) {
 	}
 	command := AD
 	args := []string{
-		source,
+		master,
 		"--out-file=" + out + ".pdf",
 		"--require=asciidoctor-diagram",
 		"--require=asciidoctor-pdf",
 		"--require=asciidoctor-bibliography",
 		"--backend=pdf",
-		"-a data-uri",
 		"--destination-dir=" + dest,
 	}
-	cmd := exec.Command(command, args...)
-	var outb, errb bytes.Buffer
-	cmd.Stdout = &outb
-	cmd.Stderr = &errb
-	err := cmd.Run()
+	result, err := exec.Command(command, args...).CombinedOutput()
+	r := string(result)
+
+	if r != "" {
+		fmt.Print(r)
+	}
 	if err != nil {
 		log.Error(err)
-		log.Error(outb.String())
-		log.Error(errb.String())
-
-		log.Errorf("%s PDF could not be built", source)
+		log.Errorf("%s PDF could not be built", master)
 		os.Exit(1)
 	}
-	log.Infof("%s.pdf build succeeded.", out)
 
 }

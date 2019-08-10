@@ -16,9 +16,9 @@ var newCmd = &cobra.Command{
 	Short: "new creates a new asciidoc file at the path entered.",
 	Long: `The new command creates new asciidoc files for a manuscript. It will create a new asciidoc file at the path entered. For example:
 
-		socrates new parts/part_01/chapters/chapter_02.adoc
+		socrates new parts/part_01/chapters/chapter_02/chapter_02.adoc
 
-	This will create chapter_02.adoc in the parts/part_01/chapters folder.`,
+	This will create chapter_02.adoc in the parts/part_01/chapters/chapter_02 folder.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		newDoc(afero.NewOsFs(), args)
@@ -50,8 +50,7 @@ func newDoc(fs afero.Fs, args []string) {
 	yellow := color.New(color.FgYellow).SprintFunc()
 
 	log.Infof("%s created.", path)
-	fmt.Print("\nThe following include directive should be added to where you want the include to appear in your manuscript:\n\n")
-	inc := fmt.Sprintf("include::%s[]\n\n", path)
-	fmt.Printf("%s", yellow(inc))
-	fmt.Print("The path in the inclue directive may need to be edited depending on the file for which it is intended.")
+	fmt.Print("\nThe following include directive should be added where you want the included file's content to appear in your manuscript:\n\n")
+	fmt.Print(yellow("include::%s[]\n\n", path))
+	fmt.Print("NOTE: The path in the inclue directive may need to be edited depending on the file for which it is intended.")
 }

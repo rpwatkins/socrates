@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
@@ -26,9 +25,11 @@ var htmlCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(htmlCmd)
 
+	// file name options
 	htmlCmd.PersistentFlags().StringP("output", "o", "output File Name (no extension)", "The name to be used for the output of the build commands: docbook, html, fopub, pdf")
 	htmlCmd.PersistentFlags().Bool("timestamp", false, "Add the build timestamp to the output file name (default=false")
 
+	// read from config file
 	if err := viper.BindPFlag("output", htmlCmd.PersistentFlags().Lookup("output")); err != nil {
 		log.Error(err)
 		os.Exit(1)
@@ -44,41 +45,37 @@ func buildHTML(fs afero.Fs) {
 	// include check
 	missing := runValidation(fs)
 	if len(missing) > 0 {
-		log.Error("build failed.")
+		log.Error("build failed. Some files are missing. Run check to view.")
 		os.Exit(1)
 	}
 	// buildPDF creates a manuscript from a master.adoc file in the current directory
 	// destination is the build folder under the cwd
-	source := master
 	dest := filepath.Join("build", "html")
+	// get file name from config
 	out := viper.Get("output").(string)
 	if viper.Get("timestamp").(bool) {
 		out = fmt.Sprintf("%s--%s", out, time.Now().Format("2006-01-02-15-04-05"))
 	}
-
+	// build
 	command := AD
 	args := []string{
-		source,
+		master,
 		"--out-file=" + out + ".html",
 		"--require=asciidoctor-diagram",
 		"--require=asciidoctor-bibliography",
 		"--backend=html5",
-		"--quiet",
 		"-a max-width=55em",
 		"--destination-dir=" + dest,
 	}
-	cmd := exec.Command(command, args...)
-	var outb, errb bytes.Buffer
-	cmd.Stdout = &outb
-	cmd.Stderr = &errb
-	err := cmd.Run()
+	result, err := exec.Command(command, args...).CombinedOutput()
+	r := string(result)
+
+	if r != "" {
+		fmt.Print(r)
+	}
 	if err != nil {
 		log.Error(err)
-		log.Error(outb.String())
-		log.Error(errb.String())
-
-		log.Errorf("%s HTML could not be built", source)
+		log.Errorf("%s HTML could not be built", master)
 		os.Exit(1)
 	}
-	log.Infof("%s.html build succeeded.", out)
 }

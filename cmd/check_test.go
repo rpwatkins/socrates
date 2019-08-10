@@ -29,7 +29,7 @@ func TestCheck_InitPasses(t *testing.T) {
 	// none missing
 	f, m := flattenAndSortByMissingIncludes(incs)
 	// twelve found
-	assert.Equal(12, len(f))
+	assert.Equal(13, len(f))
 	assert.Equal(0, len(m))
 	for _, v := range m {
 		fmt.Printf("%s\n", v.Path)
@@ -175,7 +175,7 @@ func Test_ImageBlockMacro(t *testing.T) {
 	// none missing
 	f, m := flattenAndSortByMissingIncludes(incs)
 	// twelve found
-	assert.Equal(12, len(f))
+	assert.Equal(13, len(f))
 	assert.Equal(1, len(m))
 	for _, v := range f {
 		fmt.Printf("%s\n", v.Path)
@@ -189,7 +189,7 @@ func Test_ImageBlockMacro(t *testing.T) {
 	found, missing := flattenAndSortByMissingIncludes(newIncs)
 
 	// check success
-	assert.Equal(13, len(found))
+	assert.Equal(14, len(found))
 	assert.Equal(0, len(missing))
 
 }
@@ -218,7 +218,7 @@ func Test_InlineImage(t *testing.T) {
 	// none missing
 	f, m := flattenAndSortByMissingIncludes(incs)
 	// twelve found
-	assert.Equal(12, len(f))
+	assert.Equal(13, len(f))
 	assert.Equal(1, len(m))
 	for _, v := range f {
 		fmt.Printf("%s\n", v.Path)
@@ -235,7 +235,7 @@ func Test_InlineImage(t *testing.T) {
 	found, missing := flattenAndSortByMissingIncludes(newIncs)
 
 	// check success
-	assert.Equal(13, len(found))
+	assert.Equal(14, len(found))
 	assert.Equal(0, len(missing))
 }
 
@@ -271,7 +271,7 @@ func Test_URL(t *testing.T) {
 	// none missing
 	f, m := flattenAndSortByMissingIncludes(incs)
 	// check success
-	assert.Equal(16, len(f))
+	assert.Equal(17, len(f))
 	assert.Equal(4, len(m))
 }
 func Test_diagram(t *testing.T) {
@@ -302,7 +302,7 @@ func Test_diagram(t *testing.T) {
 	// none missing
 	f, m := flattenAndSortByMissingIncludes(incs)
 	// twelve found
-	assert.Equal(12, len(f))
+	assert.Equal(13, len(f))
 	assert.Equal(1, len(m))
 
 	// create file
@@ -314,7 +314,7 @@ func Test_diagram(t *testing.T) {
 	found, missing := flattenAndSortByMissingIncludes(newIncs)
 
 	// check success
-	assert.Equal(13, len(found))
+	assert.Equal(14, len(found))
 	assert.Equal(0, len(missing))
 
 }
