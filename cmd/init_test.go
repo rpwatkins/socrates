@@ -22,31 +22,33 @@ func TestInit(t *testing.T) {
 		assert.True(exists)
 	}
 	// check files
-	files := []string{
-		filepath.Join(master),
-		filepath.Join("references.bib"),
-		filepath.Join("socrates.toml"),
-		filepath.Join("front_matter", "abstract.adoc"),
-		filepath.Join("front_matter", "dedication.adoc"),
-		filepath.Join("front_matter", "preface.adoc"),
-		filepath.Join("back_matter", "appendix_01.adoc"),
-		filepath.Join("back_matter", "bibliography.adoc"),
-		filepath.Join("back_matter", "colophon.adoc"),
-		filepath.Join("back_matter", "glossary.adoc"),
-		filepath.Join("back_matter", "index.adoc"),
-		filepath.Join("parts", "part_01", "chapters", "chapter_01", "chapter_01.adoc"),
-		filepath.Join("resources", "pdfstyles", "default-theme.yml"),
-		filepath.Join("parts", "part_01", "part_01.adoc"),
-	}
-
-	for _, v := range files {
-
-		exists, err := afero.Exists(fs, v)
-		if !exists {
-			fmt.Printf("checking: %s\n", v)
+	files := InitFileMap()
+	for k, v := range files {
+		f := k
+		// check name
+		if k[len(k)-5:] == "plush" {
+			// run through plush with number = 1
+			extension := filepath.Ext(k)
+			f = k[0 : len(k)-len(extension)]
 		}
+
+		if f == "chapter.adoc" {
+			f = "chapter_01.adoc"
+		}
+		if f == "appendix.adoc" {
+			f = "appendix_01.adoc"
+		}
+		if f == "part.adoc" {
+			f = "part_01.adoc"
+		}
+
+		exists, err := afero.Exists(fs, filepath.Join(v, f))
+
 		assert.NoError(err)
 		assert.True(exists)
 
+		if !exists {
+			fmt.Printf("%s not found", filepath.Join(v, f))
+		}
 	}
 }
