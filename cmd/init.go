@@ -193,7 +193,7 @@ func git(fs afero.Fs) {
 				log.Error(err2)
 			} else {
 				gi := strings.TrimSpace(string(b))
-				fmt.Printf("\n%s", gi)
+				fmt.Printf("%s", gi)
 
 				add := exec.Command("git", "add", ".")
 				o, err := add.CombinedOutput()
@@ -252,6 +252,7 @@ func InitFileMap() map[string]string {
 	m["include_02.adoc"] = filepath.Join("parts", "part_01", "chapters", "chapter_01")
 	m["default-theme.yml"] = filepath.Join("resources", "pdfstyles")
 	m["part.adoc.plush"] = filepath.Join("parts", "part_01")
+	m["htmlstyles/asciidoctor-bs-themes/LICENSE"] = res
 	m["htmlstyles/asciidoctor-bs-themes/bootstrap_cerulean.css"] = res
 	m["htmlstyles/asciidoctor-bs-themes/bootstrap_cerulean.min.css"] = res
 	m["htmlstyles/asciidoctor-bs-themes/bootstrap_custom.css"] = res
@@ -262,6 +263,7 @@ func InitFileMap() map[string]string {
 	m["htmlstyles/asciidoctor-bs-themes/bootstrap_default.min.css"] = res
 	m["htmlstyles/asciidoctor-bs-themes/bootstrap_slate.css"] = res
 	m["htmlstyles/asciidoctor-bs-themes/bootstrap_slate.min.css"] = res
+	m["htmlstyles/asciidoctor-skins/LICENSE"] = res
 	m["htmlstyles/asciidoctor-skins/asciidoctor.css"] = res
 	m["htmlstyles/asciidoctor-skins/boot-cerulean.css"] = res
 	m["htmlstyles/asciidoctor-skins/boot-cosmo.css"] = res
@@ -299,6 +301,7 @@ func InitFileMap() map[string]string {
 	m["htmlstyles/asciidoctor-skins/template.css"] = res
 	m["htmlstyles/asciidoctor-skins/tufte.css"] = res
 	m["htmlstyles/asciidoctor-skins/ubuntu.css"] = res
+	m["htmlstyles/stylesheet-factory/LICENSE"] = res
 	m["htmlstyles/stylesheet-factory/asciidoctor.css"] = res
 	m["htmlstyles/stylesheet-factory/colony.css"] = res
 	m["htmlstyles/stylesheet-factory/foundation-lime.css"] = res
@@ -312,6 +315,7 @@ func InitFileMap() map[string]string {
 	m["htmlstyles/stylesheet-factory/riak.css"] = res
 	m["htmlstyles/stylesheet-factory/rocket-panda.css"] = res
 	m["htmlstyles/stylesheet-factory/rubygems.css"] = res
+	m["htmlstyles/stylesheets-bulma/LICENSE"] = res
 	m["htmlstyles/stylesheets-bulma/asciidoctor-embedded.css"] = res
 	m["htmlstyles/stylesheets-bulma/asciidoctor-embedded.css.map"] = res
 	m["htmlstyles/stylesheets-bulma/asciidoctor-embedded.min.css"] = res
