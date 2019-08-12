@@ -26,8 +26,9 @@ func init() {
 	rootCmd.AddCommand(htmlCmd)
 
 	// file name options
-	htmlCmd.PersistentFlags().StringP("output", "o", "output File Name (no extension)", "The name to be used for the output of the build commands: docbook, html, fopub, pdf")
-	htmlCmd.PersistentFlags().Bool("timestamp", false, "Add the build timestamp to the output file name (default=false")
+	htmlCmd.PersistentFlags().StringP("output", "o", "output file name", "the name to be used for the output file")
+	htmlCmd.PersistentFlags().Bool("timestamp", false, "add the build timestamp to the output file name")
+	htmlCmd.PersistentFlags().Bool("skip", false, "skip validation")
 
 	// read from config file
 	if err := viper.BindPFlag("output", htmlCmd.PersistentFlags().Lookup("output")); err != nil {
@@ -38,25 +39,30 @@ func init() {
 		log.Error(err)
 		os.Exit(1)
 	}
+	if err := viper.BindPFlag("skip", htmlCmd.PersistentFlags().Lookup("skip")); err != nil {
+		log.Error(err)
+		os.Exit(1)
+	}
 }
 
 func buildHTML(fs afero.Fs) {
 
-	// include check
-	missing := runValidation(fs)
-	if len(missing) > 0 {
-		log.Error("build failed. Some files are missing. Run check to view.")
-		os.Exit(1)
+	// check file references
+	if !viper.Get("skip").(bool) {
+		missing := runValidation(fs)
+		if len(missing) > 0 {
+			log.Error("build failed. Some files are missing. Run check to view.")
+			os.Exit(1)
+		}
 	}
-	// buildPDF creates a manuscript from a master.adoc file in the current directory
-	// destination is the build folder under the cwd
-	dest := filepath.Join("build", "html")
-	// get file name from config
+
+	// get output file name from config
 	out := viper.Get("output").(string)
 	if viper.Get("timestamp").(bool) {
 		out = fmt.Sprintf("%s--%s", out, time.Now().Format("2006-01-02-15-04-05"))
 	}
-	// build
+
+	// configure build command
 	command := AD
 	args := []string{
 		master,
@@ -65,11 +71,12 @@ func buildHTML(fs afero.Fs) {
 		"--require=asciidoctor-bibliography",
 		"--backend=html5",
 		"-a max-width=55em",
-		"--destination-dir=" + dest,
+		"--destination-dir=" + filepath.Join("build", "html"),
 	}
+	// run asciidoctor
 	result, err := exec.Command(command, args...).CombinedOutput()
+	// display any mesages from asciidoctor (errors or warnings)
 	r := string(result)
-
 	if r != "" {
 		fmt.Print(r)
 	}

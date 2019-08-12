@@ -21,8 +21,8 @@ import (
 
 var checkCmd = &cobra.Command{
 	Use:   "check",
-	Short: "check validates a project's block macros and includes for missing files and tests URLs.",
-	Long:  `The check command validates a project's block macros and include directives for missing files and it also test URLs.`,
+	Short: "check validates a project's block macros, includes, and inline images for missing files and tests URLs for broken links.",
+	Long:  `The check command validates a project's block macros, includes, and inline images for missing files and tests URLs for broken links.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		check(afero.NewOsFs())
 	},
@@ -42,7 +42,17 @@ type include struct {
 
 func check(fs afero.Fs) {
 
+	// output colors
+	red := color.New(color.FgRed).SprintFunc()         // missing
+	blue := color.New(color.FgBlue).SprintFunc()       // includes
+	yellow := color.New(color.FgYellow).SprintFunc()   // attributes
+	cyan := color.New(color.FgCyan).SprintFunc()       // images
+	magenta := color.New(color.FgMagenta).SprintFunc() // urls
+	green := color.New(color.FgHiGreen).SprintFunc()   // diagrams
+
+	// get hierarchy of includes
 	incs := checkMaster(fs, master)
+	// found/missing
 	f, m := flattenAndSortByMissingIncludes(incs)
 	// prepare summary
 	missingCount := len(m)
@@ -66,14 +76,6 @@ func check(fs afero.Fs) {
 		}
 	}
 
-	// show tree
-	red := color.New(color.FgRed).SprintFunc()         // missing
-	blue := color.New(color.FgBlue).SprintFunc()       // includes
-	yellow := color.New(color.FgYellow).SprintFunc()   // attributes
-	cyan := color.New(color.FgCyan).SprintFunc()       // images
-	magenta := color.New(color.FgMagenta).SprintFunc() // urls
-	green := color.New(color.FgHiGreen).SprintFunc()   // diagrams
-
 	fmt.Print("\nSUMMARY:   ")
 	fmt.Print(red(fmt.Sprintf("%d missing      ", missingCount)))
 	fmt.Print(blue(fmt.Sprintf("%d %s   ", includeCount, plural(includeCount, includeS))))
@@ -86,6 +88,7 @@ func check(fs afero.Fs) {
 	root := textree.NewNode(master)
 	// get all child nodes
 	display(incs, root)
+	// display
 	o := textree.NewRenderOptions()
 	root.Render(os.Stdout, o)
 

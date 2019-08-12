@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"os"
+	"path/filepath"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -51,8 +52,9 @@ func initConfig() {
 	}
 
 	// defaults
-	viper.SetDefault("output", cwd)
+	viper.SetDefault("output", filepath.Base(cwd))
 	viper.SetDefault("timestamp", false)
+	viper.SetDefault("skip", false)
 	// Search config in project directory with name reid (without extension).
 	viper.AddConfigPath(cwd)
 	viper.SetConfigType("toml")
