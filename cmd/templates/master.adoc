@@ -1,12 +1,12 @@
-:doctitle:
-:subtitle:
+:doctitle: New Project
+:subtitle: New Project
 :description: 
 :keywords:
 :author: 
 :authorinitials: 
 :revnumber: 0.1.0
 :email: 
-:copyright: 
+:copyright: 2019
 :revdate: {docdate}
 :doctype: book
 :data-uri:
@@ -27,6 +27,7 @@
 :imagesoutdir: images
 :pdf-style: default
 :pdf-stylesdir: resources/pdfstyles
+:stylesheet: resources/stylesheet-factory/asciidoctor.css
 
 = {doctitle} : {subtitle}
 

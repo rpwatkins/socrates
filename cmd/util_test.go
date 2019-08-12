@@ -63,6 +63,6 @@ func Test_getAttributes(t *testing.T) {
 
 	atts, err := getAttributes(fs, "master.adoc")
 	assert.NoError(err)
-	assert.Equal(29, len(atts))
+	assert.Equal(30, len(atts))
 
 }

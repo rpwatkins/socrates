@@ -50,7 +50,7 @@ func buildPDF(fs afero.Fs) {
 		missing := runValidation(fs)
 		if len(missing) > 0 {
 			check(fs)
-			log.Error("\nbuild failed: some files are missing.")
+			log.Error("\nbuild failed: some files are missing. Run the check command.")
 		}
 	}
 	// get output file name from config

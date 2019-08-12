@@ -1,5 +1,5 @@
-:doctitle:
-:subtitle:
+:doctitle: <%- title %>
+:subtitle: <%= title %>
 :description: 
 :keywords:
 :author: 
@@ -25,7 +25,8 @@
 :bibliography-style: chicago-author-date
 :imagesdir: images
 :imagesoutdir: images
+:pdf-stylesdir: resources/pdfstyles
 :pdf-style: default
-
+:stylesheet: resources/htmlstyles/stylesheet-factory/asciidoctor.css
 
 = {doctitle} : {subtitle}

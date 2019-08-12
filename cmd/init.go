@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -15,10 +17,11 @@ import (
 )
 
 var bare bool
+var nogit bool
 
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "init creates a new manuscript.",
+	Short: "init creates a new manuscript project.",
 	Long:  `The init command creates a new manuscript.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		initProject(afero.NewOsFs())
@@ -28,6 +31,8 @@ var initCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(initCmd)
 	initCmd.Flags().BoolVarP(&bare, "bare", "b", false, "create a bare project.")
+	initCmd.Flags().BoolVarP(&nogit, "nogit", "n", false, "skip git init")
+
 }
 
 func initProject(fs afero.Fs) {
@@ -49,6 +54,7 @@ func initProject(fs afero.Fs) {
 			log.Error("initilization failed.")
 			os.Exit(1)
 		}
+
 	} else {
 		if err := writeBare(fs); err != nil {
 			log.Error(err)
@@ -56,10 +62,12 @@ func initProject(fs afero.Fs) {
 			os.Exit(1)
 		}
 	}
+	// git init & add
+	git(fs)
 	log.Info("Socrates project created.")
 }
 
-// bare socrates project
+// bare socrates
 func writeBare(fs afero.Fs) error {
 	box := packr.New("assets", "./templates")
 	file, err := box.Find("master-bare.adoc")
@@ -175,6 +183,30 @@ func writeFS(fs afero.Fs) error {
 	return nil
 }
 
+func git(fs afero.Fs) {
+	if !nogit {
+		_, err := exec.LookPath("git")
+		if err == nil {
+			c := exec.Command("git", "init")
+			b, err2 := c.CombinedOutput()
+			if err2 != nil {
+				log.Error(err2)
+			} else {
+				gi := strings.TrimSpace(string(b))
+				fmt.Printf("\n%s", gi)
+
+				add := exec.Command("git", "add", ".")
+				o, err := add.CombinedOutput()
+				if err != nil {
+					log.Error(err)
+				}
+				ga := strings.TrimSpace(string(o))
+				fmt.Printf("\n%s", ga)
+			}
+		}
+	}
+}
+
 // default init below
 func InitPaths() []string {
 	return []string{
@@ -214,6 +246,7 @@ func InitFileMap() map[string]string {
 	m["placeholder.jpg"] = "images"
 	m["references.bib"] = "."
 	m["socrates.toml.plush"] = "."
+	m[".gitignore"] = "."
 	m["chapter.adoc.plush"] = filepath.Join("parts", "part_01", "chapters", "chapter_01")
 	m["include_01.adoc"] = filepath.Join("parts", "part_01", "chapters", "chapter_01")
 	m["include_02.adoc"] = filepath.Join("parts", "part_01", "chapters", "chapter_01")
