@@ -21,4 +21,4 @@ To get started, visit the https://socratesdoc.netlify.com[Socrates Documentation
 * More PDF and HTML styles.
 
 
-https://app.fossa.com/api/projects/git%2Bgithub.com%2Frpwatkins%2Fsocrates.svg?type=shield)[]
+https://app.fossa.com/api/projects/git%2Bgithub.com%2Frpwatkins%2Fsocrates.svg?type=shield[]
