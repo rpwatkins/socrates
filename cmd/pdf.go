@@ -26,8 +26,8 @@ func init() {
 	rootCmd.AddCommand(pdfCmd)
 
 	pdfCmd.Flags().StringP("output", "o", "output File Name (no extension)", "The name to be used for the output of the build commands: docbook, html, fopub, pdf")
-	pdfCmd.Flags().Bool("timestamp", false, "Add the build timestamp to the output file name (default=false")
-	pdfCmd.Flags().Bool("skip", false, "skip validation (default=false")
+	pdfCmd.Flags().Bool("timestamp", false, "Add the build timestamp to the output file name")
+	pdfCmd.Flags().Bool("skip", false, "skip validation")
 
 	if err := viper.BindPFlag("output", pdfCmd.Flags().Lookup("output")); err != nil {
 		log.Error(err)
