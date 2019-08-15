@@ -39,7 +39,6 @@ func clean(fs afero.Fs) {
 		log.Error("build folder could not be cleaned")
 		os.Exit(1)
 	}
-	log.Info("build folder cleaned.")
 }
 
 func removeContents(fs afero.Fs, dir string) error {

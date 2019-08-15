@@ -32,14 +32,13 @@ func init() {
 	rootCmd.AddCommand(initCmd)
 	initCmd.Flags().BoolVarP(&bare, "bare", "b", false, "create a bare project.")
 	initCmd.Flags().BoolVarP(&nogit, "nogit", "n", false, "skip git init")
-
 }
 
 func initProject(fs afero.Fs) {
 
 	empty, err := afero.IsEmpty(fs, ".")
 	if err != nil {
-		log.Error(err.Error())
+		log.Error(err)
 		os.Exit(1)
 	}
 	if !empty {
@@ -47,7 +46,6 @@ func initProject(fs afero.Fs) {
 		os.Exit(1)
 	}
 
-	// confirm current working directory is empty
 	if !bare {
 		if err := writeFS(fs); err != nil {
 			log.Error(err)
@@ -62,8 +60,6 @@ func initProject(fs afero.Fs) {
 			os.Exit(1)
 		}
 	}
-	// git init & add
-	git(fs)
 	log.Info("Socrates project created.")
 }
 
@@ -78,18 +74,11 @@ func writeBare(fs afero.Fs) error {
 	if err := afero.WriteFile(fs, master, file, 0644); err != nil {
 		return err
 	}
-	file2, err := box.Find("references.bib")
-	if err != nil {
-		return err
-	}
-	// copy file to destination
-	if err := afero.WriteFile(fs, "references.bib", file2, 0644); err != nil {
-		return err
-	}
 	if Verbose {
 		log.Infof("%s created.", master)
-		log.Infof("references.bib created.")
 	}
+	// git init & add
+	git(fs)
 	return nil
 
 }
@@ -180,6 +169,8 @@ func writeFS(fs afero.Fs) error {
 			}
 		}
 	}
+	// git init & add
+	git(fs)
 	return nil
 }
 

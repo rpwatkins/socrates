@@ -21,15 +21,31 @@ import (
 
 var checkCmd = &cobra.Command{
 	Use:   "check",
-	Short: "check validates a project's block macros, includes, and inline images for missing files and tests URLs for broken links.",
-	Long:  `The check command validates a project's block macros, includes, and inline images for missing files and tests URLs for broken links.`,
+	Short: "check validates a project's diagram block macros, includes, attributes, and images (block and inline) for missing files and tests URLs for broken links.",
+	Long:  `The check command validates a project's diagram block macros, includes, attributes, and images (block and inline) for missing files and tests URLs for broken links.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		check(afero.NewOsFs())
 	},
 }
 
+// output colors
+var red func(a ...interface{}) string
+var blue func(a ...interface{}) string
+var yellow func(a ...interface{}) string
+var cyan func(a ...interface{}) string
+var magenta func(a ...interface{}) string
+var green func(a ...interface{}) string
+
 func init() {
 	rootCmd.AddCommand(checkCmd)
+
+	// initialize output colors
+	red = color.New(color.FgRed).SprintFunc()         // missing
+	blue = color.New(color.FgBlue).SprintFunc()       // includes
+	yellow = color.New(color.FgYellow).SprintFunc()   // attributes
+	cyan = color.New(color.FgCyan).SprintFunc()       // images
+	magenta = color.New(color.FgMagenta).SprintFunc() // urls
+	green = color.New(color.FgHiGreen).SprintFunc()   // diagrams
 }
 
 type include struct {
@@ -41,14 +57,6 @@ type include struct {
 }
 
 func check(fs afero.Fs) {
-
-	// output colors
-	red := color.New(color.FgRed).SprintFunc()         // missing
-	blue := color.New(color.FgBlue).SprintFunc()       // includes
-	yellow := color.New(color.FgYellow).SprintFunc()   // attributes
-	cyan := color.New(color.FgCyan).SprintFunc()       // images
-	magenta := color.New(color.FgMagenta).SprintFunc() // urls
-	green := color.New(color.FgHiGreen).SprintFunc()   // diagrams
 
 	// get hierarchy of includes
 	incs := checkMaster(fs, master)
@@ -94,21 +102,7 @@ func check(fs afero.Fs) {
 
 }
 
-func plural(num int, item string) string {
-	if num == 1 {
-		return item
-	} else {
-		return item + "s"
-	}
-}
-
 func display(includes []include, parent *textree.Node) {
-	red := color.New(color.FgRed).SprintFunc()         // missing
-	blue := color.New(color.FgBlue).SprintFunc()       // includes
-	yellow := color.New(color.FgYellow).SprintFunc()   // attributes
-	cyan := color.New(color.FgCyan).SprintFunc()       // images
-	magenta := color.New(color.FgMagenta).SprintFunc() // urls
-	green := color.New(color.FgHiGreen).SprintFunc()   // diagrams
 
 	for _, inc := range includes {
 		name := filepath.Base(inc.Path)
@@ -147,14 +141,12 @@ func checkMaster(fs afero.Fs, file string) []include {
 		log.Error(err)
 		os.Exit(1)
 	}
-
 	// open master.adoc
 	content, err := afero.ReadFile(fs, file)
 	if err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
-
 	// list of includes
 	incs := []include{}
 	// scan file line by line

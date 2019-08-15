@@ -32,6 +32,7 @@ func TestInit(t *testing.T) {
 			f = k[0 : len(k)-len(extension)]
 		}
 
+		// rename files
 		if f == "chapter.adoc" {
 			f = "chapter_01.adoc"
 		}
@@ -51,4 +52,19 @@ func TestInit(t *testing.T) {
 			fmt.Printf("%s not found", filepath.Join(v, f))
 		}
 	}
+}
+
+func Test_InitBare(t *testing.T) {
+
+	assert := assert.New(t)
+	// use in memory file system
+	fs := afero.NewMemMapFs()
+
+	err := writeBare(fs)
+	assert.NoError(err)
+
+	exists, err := afero.Exists(fs, "master.adoc")
+	assert.NoError(err)
+	assert.True(exists)
+
 }

@@ -25,19 +25,19 @@ var pdfCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(pdfCmd)
 
-	pdfCmd.PersistentFlags().StringP("output", "o", "output File Name (no extension)", "The name to be used for the output of the build commands: docbook, html, fopub, pdf")
-	pdfCmd.PersistentFlags().Bool("timestamp", false, "Add the build timestamp to the output file name (default=false")
-	pdfCmd.PersistentFlags().Bool("skip", false, "skip validation (default=false")
+	pdfCmd.Flags().StringP("output", "o", "output File Name (no extension)", "The name to be used for the output of the build commands: docbook, html, fopub, pdf")
+	pdfCmd.Flags().Bool("timestamp", false, "Add the build timestamp to the output file name (default=false")
+	pdfCmd.Flags().Bool("skip", false, "skip validation (default=false")
 
-	if err := viper.BindPFlag("output", pdfCmd.PersistentFlags().Lookup("output")); err != nil {
+	if err := viper.BindPFlag("output", pdfCmd.Flags().Lookup("output")); err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
-	if err := viper.BindPFlag("timestamp", pdfCmd.PersistentFlags().Lookup("timestamp")); err != nil {
+	if err := viper.BindPFlag("timestamp", pdfCmd.Flags().Lookup("timestamp")); err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
-	if err := viper.BindPFlag("skip", pdfCmd.PersistentFlags().Lookup("skip")); err != nil {
+	if err := viper.BindPFlag("skip", pdfCmd.Flags().Lookup("skip")); err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}

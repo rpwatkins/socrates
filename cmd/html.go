@@ -26,20 +26,20 @@ func init() {
 	rootCmd.AddCommand(htmlCmd)
 
 	// file name options
-	htmlCmd.PersistentFlags().StringP("output", "o", "output file name", "the name to be used for the output file")
-	htmlCmd.PersistentFlags().Bool("timestamp", false, "add the build timestamp to the output file name")
-	htmlCmd.PersistentFlags().Bool("skip", false, "skip validation")
+	htmlCmd.Flags().StringP("output", "o", "output file name", "the name to be used for the output file")
+	htmlCmd.Flags().Bool("timestamp", false, "add the build timestamp to the output file name")
+	htmlCmd.Flags().Bool("skip", false, "skip validation")
 
 	// read from config file
-	if err := viper.BindPFlag("output", htmlCmd.PersistentFlags().Lookup("output")); err != nil {
+	if err := viper.BindPFlag("output", htmlCmd.Flags().Lookup("output")); err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
-	if err := viper.BindPFlag("timestamp", htmlCmd.PersistentFlags().Lookup("timestamp")); err != nil {
+	if err := viper.BindPFlag("timestamp", htmlCmd.Flags().Lookup("timestamp")); err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}
-	if err := viper.BindPFlag("skip", htmlCmd.PersistentFlags().Lookup("skip")); err != nil {
+	if err := viper.BindPFlag("skip", htmlCmd.Flags().Lookup("skip")); err != nil {
 		log.Error(err)
 		os.Exit(1)
 	}

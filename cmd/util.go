@@ -75,3 +75,11 @@ func getImagePath(fs afero.Fs, path string) (string, error) {
 	}
 	return "", errors.New("no imagesdir attribute found in master.adoc.")
 }
+
+func plural(num int, item string) string {
+	if num == 1 {
+		return item
+	} else {
+		return item + "s"
+	}
+}
